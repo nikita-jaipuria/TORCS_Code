@@ -159,6 +159,7 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
-    free(botname[index]);
+    // int i = index - 1;
+    // free(botname[i]);
 }
 
