@@ -14,18 +14,46 @@
 <params name="test" type="robotdef">
   <section name="Robots">
     <section name="index">
+
       <section name="1">
-	<attstr name="name" val="test"></attstr>
-	<attstr name="desc" val=""></attstr>
-	<attstr name="team" val=""></attstr>
-	<attstr name="author" val="Nikita"></attstr>
-	<attstr name="car name" val="car1-trb1"></attstr>
-	<attstr name="category" val="trb1"></attstr>
-	<attnum name="race number" val="0"></attnum>
-	<attnum name="red" val="1.0"></attnum>
-	<attnum name="green" val="1.0"></attnum>
-	<attnum name="blue" val="1.0"></attnum>
+		<attstr name="name" val="test 1"/>
+		<attstr name="desc" val="nikita testbot 1"/>
+		<attstr name="team" val="test"/>
+		<attstr name="author" val="Nikita"/>
+		<attstr name="car name" val="car1-trb1"/>
+		<attstr name="category" val="trb1"/>
+		<attnum name="race number" val="500"/>
+		<attnum name="red" val="1.0"/>
+		<attnum name="green" val="1.0"/>
+		<attnum name="blue" val="1.0"/>
       </section>
+
+      <section name="2">
+		<attstr name="name" val="test 2"/>
+		<attstr name="desc" val="nikita testbot 2"/>
+		<attstr name="team" val="test"/>
+		<attstr name="author" val="Nikita"/>
+		<attstr name="car name" val="car1-trb1"/>
+		<attstr name="category" val="trb1"/>
+		<attnum name="race number" val="501"/>
+		<attnum name="red" val="1.0"/>
+		<attnum name="green" val="1.0"/>
+		<attnum name="blue" val="1.0"/>
+      </section>
+
+      <section name="3">
+		<attstr name="name" val="test 3"/>
+		<attstr name="desc" val="nikita testbot 3"/>
+		<attstr name="team" val="test"/>
+		<attstr name="author" val="Nikita"/>
+		<attstr name="car name" val="car1-trb1"/>
+		<attstr name="category" val="trb1"/>
+		<attnum name="race number" val="502"/>
+		<attnum name="red" val="1.0"/>
+		<attnum name="green" val="1.0"/>
+		<attnum name="blue" val="1.0"/>
+      </section>
+
     </section>
   </section>
 </params>

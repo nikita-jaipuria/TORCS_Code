@@ -31,6 +31,9 @@
 #include <robottools.h>
 #include <robot.h>
 
+#define BOTS 3
+#define BUFSIZE 20
+
 static tTrack	*curTrack;
 
 static void initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s); 
@@ -40,6 +43,13 @@ static void endrace(int index, tCarElt *car, tSituation *s);
 static void shutdown(int index);
 static int  InitFuncPt(int index, void *pt); 
 
+static char* botname[BOTS] = {
+    "test 1", "test 2", "test 3"
+};
+
+static char* botdesc[BOTS] = {
+    "test 1", "test 2", "test 3"
+};
 
 /* 
  * Module entry point  
@@ -47,15 +57,17 @@ static int  InitFuncPt(int index, void *pt);
 extern "C" int 
 test(tModInfo *modInfo) 
 {
+    /* clear all structures */
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
-    modInfo->name    = strdup("test");		/* name of the module (short) */
-    modInfo->desc    = strdup("");	/* description of the module (can be long) */
-    modInfo->fctInit = InitFuncPt;		/* init function */
-    modInfo->gfId    = ROB_IDENT;		/* supported framework version */
-    modInfo->index   = 1;
-
-    return 0; 
+    for (int i = 0; i < BOTS; i++) {
+        modInfo[i].name = strdup(botname[i]);   /* name of the module (short) */
+        modInfo[i].desc = strdup(botdesc[i]);   /* description of the module (can be long) */
+        modInfo[i].fctInit = InitFuncPt;        /* init function */
+        modInfo[i].gfId    = ROB_IDENT;         /* supported framework version */
+        modInfo[i].index   = i+1;
+    }
+    return 0;
 } 
 
 /* Module interface initialization. */
@@ -147,5 +159,6 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
+    free(botname[index]);
 }
 
