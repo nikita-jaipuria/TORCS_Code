@@ -67,7 +67,7 @@ test(tModInfo *modInfo)
         modInfo[i].fctInit = InitFuncPt;        /* init function */
         modInfo[i].gfId    = ROB_IDENT;         /* supported framework version */
         modInfo[i].index   = i+1;               /* has to be the same as the index in .xml */
-        printf("module entry point created for %d\n", modInfo[i].index);
+        // printf("module entry point created for %d\n", modInfo[i].index);
     }
     return 0;
 } 
@@ -77,7 +77,7 @@ static int
 InitFuncPt(int index, void *pt) 
 { 
     tRobotItf *itf  = (tRobotItf *)pt; 
-    printf("module interface initialized for %d\n",index);
+    // printf("module interface initialized for %d\n",index);
     /* create robot instance for index */
     driver[index-1] = new Driver(index); /* calling function Driver */
     itf->rbNewTrack = initTrack; /* Give the robot the track view called */ 
@@ -95,7 +95,7 @@ InitFuncPt(int index, void *pt)
 static void  
 initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s) 
 { 
-    printf("initializing the driver number %d\n", index);
+    // printf("initializing the driver number %d\n", index);
     driver[index-1]->initTrack(track, carHandle, carParmHandle, s);
 } 
 
@@ -151,7 +151,7 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
-    printf("freeing botname %d\n", index);
+    // printf("freeing botname %d\n", index);
     // free(botname[index-1]);
     delete driver[index-1];
 }
