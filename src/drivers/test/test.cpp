@@ -31,25 +31,25 @@
 #include <robottools.h>
 #include <robot.h>
 
-#define BOTS 3
-#define BUFSIZE 20
+#include "driver.h"
 
-static tTrack	*curTrack;
+#define BOTS 3
+#define BUFSIZE 20 //defines string length for botname[i]
+
+// static tTrack    *curTrack;
+
+static const char* botname[BOTS] = {"test 1", "test 2", "test 3"};
+static const char* botdesc[BOTS] = {"test 1", "test 2", "test 3"};
+
+static Driver* driver[BOTS];
 
 static void initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s); 
 static void newrace(int index, tCarElt* car, tSituation *s); 
 static void drive(int index, tCarElt* car, tSituation *s); 
+static int  pitcmd(int index, tCarElt* car, tSituation *s);
 static void endrace(int index, tCarElt *car, tSituation *s);
 static void shutdown(int index);
 static int  InitFuncPt(int index, void *pt); 
-
-static char* botname[BOTS] = {
-    "test 1", "test 2", "test 3"
-};
-
-static char* botdesc[BOTS] = {
-    "test 1", "test 2", "test 3"
-};
 
 /* 
  * Module entry point  
@@ -57,15 +57,17 @@ static char* botdesc[BOTS] = {
 extern "C" int 
 test(tModInfo *modInfo) 
 {
+    char buffer[BUFSIZE];
     /* clear all structures */
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
     for (int i = 0; i < BOTS; i++) {
-        modInfo[i].name = strdup(botname[i]);   /* name of the module (short) */
-        modInfo[i].desc = strdup(botdesc[i]);   /* description of the module (can be long) */
+        modInfo[i].name = strdup(botname[i]);           /* name of the module (short) */
+        modInfo[i].desc = strdup(botdesc[i]);                   /* description of the module (can be long) */
         modInfo[i].fctInit = InitFuncPt;        /* init function */
         modInfo[i].gfId    = ROB_IDENT;         /* supported framework version */
-        modInfo[i].index   = i+1;
+        modInfo[i].index   = i+1;               /* has to be the same as the index in .xml */
+        printf("module entry point created for %d\n", modInfo[i].index);
     }
     return 0;
 } 
@@ -75,15 +77,17 @@ static int
 InitFuncPt(int index, void *pt) 
 { 
     tRobotItf *itf  = (tRobotItf *)pt; 
-
+    printf("module interface initialized for %d\n",index);
+    /* create robot instance for index */
+    driver[index-1] = new Driver(index); /* calling function Driver */
     itf->rbNewTrack = initTrack; /* Give the robot the track view called */ 
-				 /* for every track change or new race */ 
-    itf->rbNewRace  = newrace; 	 /* Start a new race */
-    itf->rbDrive    = drive;	 /* Drive during race */
-    itf->rbPitCmd   = NULL;
-    itf->rbEndRace  = endrace;	 /* End of the current race */
-    itf->rbShutdown = shutdown;	 /* Called before the module is unloaded */
-    itf->index      = index; 	 /* Index used if multiple interfaces */
+                                 /* for every track change or new race */ 
+    itf->rbNewRace  = newrace;   /* Start a new race */
+    itf->rbDrive    = drive;     /* Drive during race */
+    itf->rbPitCmd   = pitcmd;
+    itf->rbEndRace  = endrace;   /* End of the current race */
+    itf->rbShutdown = shutdown;  /* Called before the module is unloaded */
+    itf->index      = index;     /* Index used if multiple interfaces */
     return 0; 
 } 
 
@@ -91,75 +95,63 @@ InitFuncPt(int index, void *pt)
 static void  
 initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s) 
 { 
-    curTrack = track;
-    *carParmHandle = NULL; 
+    printf("initializing the driver number %d\n", index);
+    driver[index-1]->initTrack(track, carHandle, carParmHandle, s);
 } 
 
 /* Start a new race. */
 static void  
 newrace(int index, tCarElt* car, tSituation *s) 
-{ 
-} 
-
-// counter
-static int stuck = 0;
-
-/* check if the car is stuck */
-bool isStuck(tCarElt* car)
 {
-    float angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
-    NORM_PI_PI(angle);
-    // angle smaller than 30 degrees?
-    if (fabs(angle) < 30.0/180.0*PI) {
-        stuck = 0;
-        return false;
-    }
-    if (stuck < 100) {
-        stuck++;
-        return false;
-    } else {
-        return true;
-    }
-}
+    driver[index-1]->newRace(car, s); 
+} 
 
 /* Drive during race. */
 static void  
 drive(int index, tCarElt* car, tSituation *s) 
 { 
-    float angle;
-    const float SC = 1.0;
+    driver[index-1]->drive(car, s);
+    // float angle;
+    // const float SC = 1.0;
 
-    memset((void *)&car->ctrl, 0, sizeof(tCarCtrl)); 
+    // memset((void *)&car->ctrl, 0, sizeof(tCarCtrl)); 
     
-    if (isStuck(car)) {
-        angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
-        NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
-        car->ctrl.steer = angle / car->_steerLock;
-        car->ctrl.gear = -1; // reverse gear
-        car->ctrl.accelCmd = 0.3; // 30% accelerator pedal
-        car->ctrl.brakeCmd = 0.0; // no brakes
-    } else {
-        angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
-        NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
-        angle -= SC*car->_trkPos.toMiddle/car->_trkPos.seg->width;
-        car->ctrl.steer = angle / car->_steerLock;
-        car->ctrl.gear = 1; // first gear
-        car->ctrl.accelCmd = 0.3; // 30% accelerator pedal
-        car->ctrl.brakeCmd = 0.0; // no brakes
-    }
+    // if (isStuck(car)) {
+    //     angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
+    //     NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
+    //     car->ctrl.steer = angle / car->_steerLock;
+    //     car->ctrl.gear = -1; // reverse gear
+    //     car->ctrl.accelCmd = 0.3; // 30% accelerator pedal
+    //     car->ctrl.brakeCmd = 0.0; // no brakes
+    // } else {
+    //     angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
+    //     NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
+    //     angle -= SC*car->_trkPos.toMiddle/car->_trkPos.seg->width;
+    //     car->ctrl.steer = angle / car->_steerLock;
+    //     car->ctrl.gear = 1; // first gear
+    //     car->ctrl.accelCmd = 0.3; // 30% accelerator pedal
+    //     car->ctrl.brakeCmd = 0.0; // no brakes
+    // }
+}
+
+/* Pitstop callback */
+static int pitcmd(int index, tCarElt* car, tSituation *s)
+{
+    return driver[index-1]->pitCommand(car, s);
 }
 
 /* End of the current race */
 static void
 endrace(int index, tCarElt *car, tSituation *s)
 {
+    driver[index-1]->endRace(car, s);
 }
 
 /* Called before the module is unloaded */
 static void
 shutdown(int index)
 {
-    // int i = index - 1;
-    // free(botname[i]);
+    printf("freeing botname %d\n", index);
+    // free(botname[index-1]);
+    delete driver[index-1];
 }
-
