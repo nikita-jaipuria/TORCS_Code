@@ -34,7 +34,7 @@
 #include "driver.h"
 
 #define BOTS 3
-#define BUFSIZE 20 //defines string length for botname[i]
+// #define BUFSIZE 20 //defines string length for botname[i]
 
 // static tTrack    *curTrack;
 
@@ -57,7 +57,7 @@ static int  InitFuncPt(int index, void *pt);
 extern "C" int 
 test(tModInfo *modInfo) 
 {
-    char buffer[BUFSIZE];
+    // char buffer[BUFSIZE];
     /* clear all structures */
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
@@ -110,7 +110,7 @@ newrace(int index, tCarElt* car, tSituation *s)
 static void  
 drive(int index, tCarElt* car, tSituation *s) 
 { 
-    driver[index-1]->drive(car, s);
+    driver[index-1]->drive(s);
     // float angle;
     // const float SC = 1.0;
 
@@ -137,14 +137,14 @@ drive(int index, tCarElt* car, tSituation *s)
 /* Pitstop callback */
 static int pitcmd(int index, tCarElt* car, tSituation *s)
 {
-    return driver[index-1]->pitCommand(car, s);
+    return driver[index-1]->pitCommand(s);
 }
 
 /* End of the current race */
 static void
 endrace(int index, tCarElt *car, tSituation *s)
 {
-    driver[index-1]->endRace(car, s);
+    driver[index-1]->endRace(s);
 }
 
 /* Called before the module is unloaded */

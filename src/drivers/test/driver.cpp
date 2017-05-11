@@ -43,16 +43,19 @@ void Driver::newRace(tCarElt* car, tSituation *s)
 {
     MAX_UNSTUCK_COUNT = int(UNSTUCK_TIME_LIMIT/RCM_MAX_DT_ROBOTS);
     stuck = 0;
+    this->car = car;
+    CARMASS = GfParmGetNum(car->_carHandle, SECT_CAR, PRM_MASS, NULL, 1000.0);
+    initCa();
 }
 
 /* Drive during race. */
-void Driver::drive(tCarElt* car, tSituation *s)
+void Driver::drive(tSituation *s)
 {
-    update(car, s);
+    update(s);
 
     memset(&car->ctrl, 0, sizeof(tCarCtrl));
 
-    if (isStuck(car)) {
+    if (isStuck()) {
         car->ctrl.steer = -angle / car->_steerLock;
         car->ctrl.gear = -1; // reverse gear
         car->ctrl.accelCmd = 0.5; // 50% accelerator pedal
@@ -62,9 +65,9 @@ void Driver::drive(tCarElt* car, tSituation *s)
 
         car->ctrl.steer = steerangle / car->_steerLock;
         car->ctrl.gear = 4; // first gear
-        car->ctrl.brakeCmd = getBrake(car);
+        car->ctrl.brakeCmd = getBrake();
         if (car->ctrl.brakeCmd == 0.0) {
-            car->ctrl.accelCmd = getAccel(car);
+            car->ctrl.accelCmd = getAccel();
         } else {
             car->ctrl.accelCmd = 0.0;
         }
@@ -72,26 +75,27 @@ void Driver::drive(tCarElt* car, tSituation *s)
 }
 
 /* Set pitstop commands. */
-int Driver::pitCommand(tCarElt* car, tSituation *s)
+int Driver::pitCommand(tSituation *s)
 {
     return ROB_PIT_IM; /* return immediately */
 }
 
 /* End of the current race */
-void Driver::endRace(tCarElt *car, tSituation *s)
+void Driver::endRace(tSituation *s)
 {
 }
 
 /* Update my private data every timestep */
-void Driver::update(tCarElt* car, tSituation *s)
+void Driver::update(tSituation *s)
 {
     trackangle = RtTrackSideTgAngleL(&(car->_trkPos));
     angle = trackangle - car->_yaw;
     NORM_PI_PI(angle);
+    mass = CARMASS + car->_fuel;
 }
 
 /* Check if I'm stuck */
-bool Driver::isStuck(tCarElt* car)
+bool Driver::isStuck()
 {
     if (fabs(angle) > MAX_UNSTUCK_ANGLE &&
         car->_speed_x < MAX_UNSTUCK_SPEED &&
@@ -115,12 +119,12 @@ float Driver::getAllowedSpeed(tTrackSeg *segment)
         return FLT_MAX;
     } else {
         float mu = segment->surface->kFriction;
-        return sqrt(mu*G*segment->radius);
+        return sqrt((mu*G*segment->radius)/(1.0 - MIN(1.0, segment->radius*CA*mu/mass)));
     }
 }
 
 /* Compute the length to the end of the segment */
-float Driver::getDistToSegEnd(tCarElt* car)
+float Driver::getDistToSegEnd()
 {
     if (car->_trkPos.seg->type == TR_STR) {
         return car->_trkPos.seg->length - car->_trkPos.toStart;
@@ -130,7 +134,7 @@ float Driver::getDistToSegEnd(tCarElt* car)
 }
 
 /* Compute fitting acceleration */
-float Driver::getAccel(tCarElt* car)
+float Driver::getAccel()
 {
     float allowedspeed = getAllowedSpeed(car->_trkPos.seg);
     float gr = car->_gearRatio[car->_gear + car->_gearOffset];
@@ -142,13 +146,13 @@ float Driver::getAccel(tCarElt* car)
     }
 }
 
-float Driver::getBrake(tCarElt* car)
+float Driver::getBrake()
 {
     tTrackSeg *segptr = car->_trkPos.seg;
     float currentspeedsqr = car->_speed_x*car->_speed_x;
     float mu = segptr->surface->kFriction;
     float maxlookaheaddist = currentspeedsqr/(2.0*mu*G);
-    float lookaheaddist = getDistToSegEnd(car);
+    float lookaheaddist = getDistToSegEnd();
     float allowedspeed = getAllowedSpeed(segptr);
     if (allowedspeed < car->_speed_x) return 1.0;
     segptr = segptr->next;
@@ -168,7 +172,7 @@ float Driver::getBrake(tCarElt* car)
 }
 
 /* Compute gear */
-int Driver::getGear(tCarElt *car)
+int Driver::getGear()
 {
     if (car->_gear <= 0) return 1;
     float gr_up = car->_gearRatio[car->_gear + car->_gearOffset];
@@ -185,4 +189,20 @@ int Driver::getGear(tCarElt *car)
         }
     }
     return car->_gear;
+}
+
+/* Compute aerodynamic downforce coefficient CA */
+void Driver::initCa()
+{
+    char *WheelSect[4] = {SECT_FRNTRGTWHEEL, SECT_FRNTLFTWHEEL, SECT_REARRGTWHEEL, SECT_REARLFTWHEEL};
+    float rearwingarea = GfParmGetNum(car->_carHandle, SECT_REARWING, PRM_WINGAREA, (char*) NULL, 0.0);
+    float rearwingangle = GfParmGetNum(car->_carHandle, SECT_REARWING, PRM_WINGANGLE, (char*) NULL, 0.0);
+    float wingca = 1.23*rearwingarea*sin(rearwingangle);
+    float cl = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS, PRM_FCL, (char*) NULL, 0.0) + GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS, PRM_RCL, (char*) NULL, 0.0);
+    float h = 0.0;
+    int i;
+    for (i = 0; i < 4; i++)
+        h += GfParmGetNum(car->_carHandle, WheelSect[i], PRM_RIDEHEIGHT, (char*) NULL, 0.20);
+        h*= 1.5; h = h*h; h = h*h; h = 2.0 * exp(-3.0*h);
+        CA = h*cl + 4.0*wingca;
 }
