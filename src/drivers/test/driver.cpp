@@ -46,6 +46,7 @@ void Driver::newRace(tCarElt* car, tSituation *s)
     this->car = car;
     CARMASS = GfParmGetNum(car->_carHandle, SECT_CAR, PRM_MASS, NULL, 1000.0);
     initCa();
+    initCw();
 }
 
 /* Drive during race. */
@@ -160,7 +161,7 @@ float Driver::getBrake()
         allowedspeed = getAllowedSpeed(segptr);
         if (allowedspeed < car->_speed_x) {
             float allowedspeedsqr = allowedspeed*allowedspeed;
-            float brakedist = (currentspeedsqr - allowedspeedsqr) / (2.0*mu*G);
+            float brakedist = mass*(currentspeedsqr - allowedspeedsqr) / (2.0*(mu*G*mass + allowedspeedsqr*(CA*mu + CW)));
             if (brakedist > lookaheaddist) {
                 return 1.0;
             }
@@ -205,4 +206,14 @@ void Driver::initCa()
         h += GfParmGetNum(car->_carHandle, WheelSect[i], PRM_RIDEHEIGHT, (char*) NULL, 0.20);
         h*= 1.5; h = h*h; h = h*h; h = 2.0 * exp(-3.0*h);
         CA = h*cl + 4.0*wingca;
+}
+
+/* Compute aerodynamic drag coefficient CW */
+void Driver::initCw()
+{
+    float cx = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS,
+                            PRM_CX, (char*) NULL, 0.0);
+    float frontarea = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS,
+                                   PRM_FRNTAREA, (char*) NULL, 0.0);
+    CW = 0.645*cx*frontarea;
 }

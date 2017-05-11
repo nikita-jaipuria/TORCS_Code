@@ -52,6 +52,8 @@ class Driver {
         float getBrake();
         int getGear();
         void initCa();
+        void initCw();
+
 
         /* per robot global data */
         int stuck;
@@ -61,6 +63,7 @@ class Driver {
         tCarElt *car;      /* pointer to tCarElt struct */
         float CARMASS;     /* mass of the car only */
         float CA;          /* aerodynamic downforce coefficient */
+        float CW;      /* aerodynamic drag coefficient */
 
         /* data that should stay constant after first initialization */
         int MAX_UNSTUCK_COUNT;
