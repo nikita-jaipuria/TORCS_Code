@@ -53,7 +53,13 @@ class Driver {
         int getGear();
         void initCa();
         void initCw();
-
+        float filterABS(float brake);
+        float filterTCL(float accel);
+        float filterTCL_RWD();
+        float filterTCL_FWD();
+        float filterTCL_4WD();
+        void initTCLfilter();
+        float (Driver::*GET_DRIVEN_WHEEL_SPEED)();
 
         /* per robot global data */
         int stuck;
@@ -78,6 +84,10 @@ class Driver {
         static const float FULL_ACCEL_MARGIN;
         static const float SHIFT;
         static const float SHIFT_MARGIN;
+        static const float ABS_SLIP;
+        static const float ABS_MINSPEED;
+        static const float TCL_SLIP;
+        static const float TCL_MINSPEED;
 
         /* track variables */
         tTrack* track;
