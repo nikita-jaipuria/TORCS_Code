@@ -16,7 +16,7 @@
 ROBOT       = test
 MODULE      = ${ROBOT}.so
 MODULEDIR   = drivers/${ROBOT}
-SOURCES     = ${ROBOT}.cpp driver.cpp
+SOURCES     = ${ROBOT}.cpp driver.cpp opponent.cpp
 
 SHIPDIR     = drivers/${ROBOT}
 SHIP        = ${ROBOT}.xml car1-trb1.rgb logo.rgb

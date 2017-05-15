@@ -33,16 +33,23 @@
 #include <robot.h>
 #include "linalg.h"
 
+#include "opponent.h"
+class Opponents;
+class Opponent;
+
 class Driver {
     public:
         Driver(int index);
-
+        ~Driver();
         /* callback functions called from TORCS */
         void initTrack(tTrack* t, void *carHandle, void **carParmHandle, tSituation *s);
         void newRace(tCarElt* car, tSituation *s);
         void drive(tSituation *s);
         int pitCommand(tSituation *s);
         void endRace(tSituation *s);
+        tCarElt *getCarPtr() { return car; }
+        tTrack *getTrackPtr() { return track; }
+        float getSpeed() { return speed; }
     private:
         /* utility functions */
         bool isStuck();
@@ -64,6 +71,9 @@ class Driver {
         float getSteer();
         v2d getTargetPoint();
         float filterTrk(float accel);
+        float filterBColl(float brake);
+        float filterSColl(float steer);
+        float getOvertakeOffset();
 
         /* per robot global data */
         int stuck;
@@ -74,6 +84,10 @@ class Driver {
         float CARMASS;     /* mass of the car only */
         float CA;          /* aerodynamic downforce coefficient */
         float CW;      /* aerodynamic drag coefficient */
+        float speed;    /* speed in track direction */
+        Opponents *opponents;
+        Opponent *opponent;
+        float myoffset;  /* overtake offset sideways */
 
         /* data that should stay constant after first initialization */
         int MAX_UNSTUCK_COUNT;
@@ -95,6 +109,9 @@ class Driver {
         static const float LOOKAHEAD_CONST;
         static const float LOOKAHEAD_FACTOR;
         static const float WIDTHDIV;
+        static const float SIDECOLL_MARGIN;
+        static const float BORDER_OVERTAKE_MARGIN;
+        static const float OVERTAKE_OFFSET_INC;
 
         /* track variables */
         tTrack* track;
