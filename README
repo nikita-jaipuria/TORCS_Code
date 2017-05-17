@@ -19,6 +19,13 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 export TORCS_BASE=/usr/src/torcs/torcs-1.2.4
 export MAKE_DEFAULT=$TORCS_BASE/Make-default.mk
 
+Steo 4: Install TORCS
+$ cd $TORCS_BASE
+$ ./configure
+$ make
+$ sudo make install
+$ sudo make datainstall
+
 Important addresses to remember:
 /usr/local/share/games/torcs to run TORCS and look up if the installation worked.
 $TORCS_BASE/src/drivers/bt to work on the robot.
@@ -28,6 +35,11 @@ You are all set !
 
 The above set of commands follow Berniw's TORCS robot tutorial
 http://www.berniw.org/tutorials/robot/tutorial.html
+
+Things to work on:
+- Car does not start initially, if human does not start in front of "test". What could possibly be causing that? Change it?
+- Change default view settings such that we can always see "test", when competing against others.
+- Create a track similar to highway DENSO is driving on.
 
 
 
