@@ -31,20 +31,35 @@ Important addresses to remember:
 $TORCS_BASE/src/drivers/bt to work on the robot.
 $TORCS_BASE/export/include/ to search in the header files.
 
+[The above set of commands follow Berniw's TORCS robot tutorial http://www.berniw.org/tutorials/robot/tutorial.html]
+
 Step 5: Copy paste the chenyi modified_tracks into the /usr/local/share/games/torcs/tracks/ folder. This will create several 2-lane and 3-lane tracks.
 https://github.com/haychris/deepdriving-collision-avoidance
 
-You are all set !
-
-The above set of commands follow Berniw's TORCS robot tutorial
-http://www.berniw.org/tutorials/robot/tutorial.html
+Notes:
+- chenyi_AI2 is obstacle car, does nothing but remain stationary on track
+- chenyi_AI3 drives on right-most lane, desired speed of 44 kph
+- chenyi_AI4 drives on left-most lane, desired speed of 46 kph
+- chenyi_AI5 drives in center lane, desired speed of 48 kph
+- chenyi_AI6 drives on right-most lane, desired speed of 50 kph
+- chenyi_AI7 drives on left-most lane, desired speed of 52 kph
+- chenyi_AI8 drives in center lane, desired speed of 54 kph
+- chenyi_AI9 drives on right-most lane, desired speed of 56 kph
+- chenyi_AI10 drives on left-most lane, desired speed of 58 kph
+- chenyi_AI11 drives in center lane, desired speed of 60 kph
+- chenyi_AI12 drives on right-most lane, desired speed of 62 kph
+- chenyi cars are very basic robots created using the first and a bit of the second chapter of the TORCS robot tutorial
 
 Things to work on:
-- Car does not start initially, if human does not start in front of "test". What could possibly be causing that? Change it?
-- Change default view settings such that we can always see "test", when competing against others.
-- Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing driver codes.
-- Create a track similar to highway DENSO is driving on.
-- chenyi cars are very basic robots! the first chapter with basic driving and no proper unstuck function implemented
+- Car does not start initially, if human does not start in front of "test". What could possibly be causing that? Change it? --
+- Change default view settings such that we can always see "test" or "my car", when competing against others --
+- Make the simple chenyi cars drive simply in lanes with highway-like speeds of 105kph/65mph/30mps --
+- Make complicated test car drive in lanes with highway-like speed --
+- Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing racing driver codes --
+- Create a multi-lane highway like track -- done
+- Create a track with a HSL merging situation --
+
+
 
 
 
