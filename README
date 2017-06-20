@@ -31,6 +31,9 @@ Important addresses to remember:
 $TORCS_BASE/src/drivers/bt to work on the robot.
 $TORCS_BASE/export/include/ to search in the header files.
 
+Step 5: Copy paste the chenyi modified_tracks into the /usr/local/share/games/torcs/tracks/ folder. This will create several 2-lane and 3-lane tracks.
+https://github.com/haychris/deepdriving-collision-avoidance
+
 You are all set !
 
 The above set of commands follow Berniw's TORCS robot tutorial
@@ -41,7 +44,7 @@ Things to work on:
 - Change default view settings such that we can always see "test", when competing against others.
 - Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing driver codes.
 - Create a track similar to highway DENSO is driving on.
-
+- chenyi cars are very basic robots! the first chapter with basic driving and no proper unstuck function implemented
 
 
 
