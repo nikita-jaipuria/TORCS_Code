@@ -58,12 +58,5 @@ Things to work on:
 - Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing racing driver codes --
 - Create a three-lane and two-lane tracks -- done
 - Create four-lane track --
-- Create overtaking situations in four-lane track using the freelane (left-most lane) --
-- Create HSL merging situation in four-lane track --
-
-
-
-
-
-
-
+- Create overtaking situations in four-lane track using the freelane (left-most lane) -- 
+- Create HSL merging situation in four-lane track -- done
