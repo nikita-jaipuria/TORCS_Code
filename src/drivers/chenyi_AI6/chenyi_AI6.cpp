@@ -147,7 +147,7 @@ bool isStuck(tCarElt* car)
 
 double desired_speed=103/3.6;
 //double keepLR=2.0;   // for two-lane
-double keepLR=4.0;   // for three-lane
+double keepLR=1.9;   // for three-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 

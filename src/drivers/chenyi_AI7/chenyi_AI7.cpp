@@ -145,9 +145,9 @@ bool isStuck(tCarElt* car)
 
 /* Drive during race. */
 
-double desired_speed=107/3.6;
+double desired_speed=101/3.6;
 //double keepLR=-2.0;   // for two-lane
-double keepLR=-4.0;   // for three-lane
+double keepLR=-1.9;   // for three-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 

@@ -38,25 +38,29 @@ https://github.com/haychris/deepdriving-collision-avoidance
 
 Notes:
 - chenyi_AI2 is obstacle car, does nothing but remain stationary on track
-- chenyi_AI3 drives on right-most lane, desired speed of 101kph
-- chenyi_AI4 drives on left-most lane, desired speed of 103kph
-- chenyi_AI5 drives in center lane, desired speed of 107kph
-- chenyi_AI6 drives on right-most lane, desired speed of 103kph
-- chenyi_AI7 drives on left-most lane, desired speed of 107kph
-- chenyi_AI8 drives in center lane, desired speed of 90kph
-- chenyi_AI9 drives on right-most lane, desired speed of 105kph
-- chenyi_AI10 drives on left-most lane, desired speed of 105kph
-- chenyi_AI11 drives in center lane, desired speed of 105kph
-- chenyi_AI12 drives on right-most lane, desired speed of 107kph
+- chenyi_AI3 drives on third lane, desired speed of 101kph
+- chenyi_AI4 drives on second lane, desired speed of 103kph
+- chenyi_AI5 drives in fourth lane, desired speed of 103kph
+- chenyi_AI6 drives on third lane, desired speed of 103kph
+- chenyi_AI7 drives on second lane, desired speed of 101kph
+- chenyi_AI8 drives in first lane, desired speed of 95kph
+- chenyi_AI9 drives on fourth lane, desired speed of 105kph
+- chenyi_AI10 drives on third lane, desired speed of 105kph
+- chenyi_AI11 drives in second lane, desired speed of 105kph
+- chenyi_AI12 drives on fourth lane, desired speed of 101kph
 - chenyi cars are very basic robots created using the first and a bit of the second chapter of the TORCS robot tutorial
 
 Things to work on:
+
+- Make the simple chenyi cars drive simply in lanes with highway-like speeds of 105kph/65mph/30mps -- done 
+Note: [faster cars tally behind the slower ones, given how desired speeds are set, if not selected in order while configuring race]
+- Create a three-lane and two-lane tracks -- done
+- Create four-lane track -- done
+- Make chenyi cars drive in lanes in the four-lane track -- done 
+- Make complicated test car drive in lanes with highway-like speed --
+- Define rules for lane change and lane keep based on desired speed --
+- Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing racing driver codes --
+- Create overtaking situations in four-lane track using the freelane (left-most lane) -- 
+- Create HSL merging situation in four-lane track -- 
 - Car does not start initially, if human does not start in front of "test". What could possibly be causing that? Change it? --
 - Change default view settings such that we can always see "test" or "my car", when competing against others --
-- Make the simple chenyi cars drive simply in lanes with highway-like speeds of 105kph/65mph/30mps -- done [few cars get stuck behind each other, in the left-most and right-most track, could be because of the very simple robot structure being used. Important thing is that the cars do not run out of the lanes at such high desired speeds too, if the simple robot structure is followed.]
-- Make complicated test car drive in lanes with highway-like speed --
-- Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing racing driver codes --
-- Create a three-lane and two-lane tracks -- done
-- Create four-lane track --
-- Create overtaking situations in four-lane track using the freelane (left-most lane) -- 
-- Create HSL merging situation in four-lane track -- done
