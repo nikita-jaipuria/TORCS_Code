@@ -142,23 +142,47 @@ bool isStuck(tCarElt* car)
     }
 }
 
-const float GAUSSIAN_DENOMINATOR = 2.0*0.3*3.8*0.3*3.8; /* [m2] */
+const int nLanes = 4;
+const float deltaLane = 3.8;
+const float W = ;
+const float L = ;
+const float Alane = 2;
+const float _sigma = 0.3*deltaLane;
+const float _neta = 3;
+const float Acar = 10;
+const float _alpha = 0.5;
+const float delta_t = -0.5;
+const float _beta = 0.6;
+const float Tf = 3;
+const float _gamma = 0.2;
+const float GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
 /* compute "lane" potential, assuming lane width of 3.8m and 4-lane track-> 3 lane edges and 2 road edges*/
 // for indexing of road and lane edges, followed the same directional convention as for lanes
-float environmentPotential(tCarElt* car)
+float getEnvironmentPotential(tCarElt* car)
 {
     float cur_y = car->_trkPos.toMiddle + 5.7;
-    float U_lane1 = 2.0*exp(-pow(cur_y-9.5,2)/GAUSSIAN_DENOMINATOR);
-    float U_lane2 = 2.0*exp(-pow(cur_y-5.7,2)/GAUSSIAN_DENOMINATOR);
-    float U_lane3 = 2.0*exp(-pow(cur_y-1.9,2)/GAUSSIAN_DENOMINATOR);
-    float U_road1 = 1.5*pow(1.0/(cur_y-13.8),2);
-    float U_road2 = 1.5*pow(1.0/(cur_y+2.4),2);
-    return U_road2 + U_road1 + U_lane3 + U_lane2 + U_lane1;
+    float uLane1 = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uLane2 = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uLane3 = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uRoad1 = 0.5*_neta*pow(1.0/(cur_y - (deltaLane/2.0*7.0 + 0.5)), 2);
+    float uRoad2 = 0.5*_neta*pow(1.0/(cur_y - (-deltaLane -0.5)), 2);
+    return uRoad2 + uRoad1 + uLane3 + uLane2 + uLane1;
+}
+
+float getCarVelocityPotentials(tCarElt* car)
+{
+    float uVel = _gamma*();
+    float uCar = 0.0;
+    int m = ; // number of relevant obstacle cars
+    for (int i = 0; i < m; i++) {
+        float K = ; // pseudo-distance to m-th obstacle car
+        uCar += Acar*exp(-_alpha*K)/K;
+    }
 }
 
 /* Drive during race. */
 
-double desired_speed=101/3.6;
+const double desired_speed=101/3.6;
 //double keepLR=-2.0;   // for two-lane
 double keepLR=1.9;// for three-lane
 
