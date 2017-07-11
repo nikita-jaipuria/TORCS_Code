@@ -142,12 +142,22 @@ bool isStuck(tCarElt* car)
     }
 }
 
+const float GAUSSIAN_DENOMINATOR = 2.0*0.3*3.8*0.3*3.8; /* [m2] */
+/* compute "lane" potential, assuming lane width of 3.8m and 4-lane track-> 3 lane edges */
+float lanePotential(tCarElt* car)
+{
+    float cur_y = car->_trkPos.toMiddle + 5.7;
+    float U_lane1 = 2*exp(-pow(cur_y-9.5,2)/GAUSSIAN_DENOMINATOR);
+    float U_lane2 = 2*exp(-pow(cur_y-5.7,2)/GAUSSIAN_DENOMINATOR);
+    float U_lane3 = 2*exp(-pow(cur_y-1.9,2)/GAUSSIAN_DENOMINATOR);
+    return U_lane1 + U_lane2 + U_lane3; 
+}
 
 /* Drive during race. */
 
 double desired_speed=101/3.6;
 //double keepLR=-2.0;   // for two-lane
-double keepLR=1.9;   // for three-lane
+double keepLR=1.9;// for three-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 

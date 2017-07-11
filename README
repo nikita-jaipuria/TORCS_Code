@@ -38,17 +38,18 @@ https://github.com/haychris/deepdriving-collision-avoidance
 
 Notes:
 - chenyi_AI2 is obstacle car, does nothing but remain stationary on track
-- chenyi_AI3 drives on third lane, desired speed of 101kph
-- chenyi_AI4 drives on second lane, desired speed of 103kph
-- chenyi_AI5 drives in fourth lane, desired speed of 103kph
-- chenyi_AI6 drives on third lane, desired speed of 103kph
-- chenyi_AI7 drives on second lane, desired speed of 101kph
-- chenyi_AI8 drives in first lane, desired speed of 95kph
-- chenyi_AI9 drives on fourth lane, desired speed of 105kph
-- chenyi_AI10 drives on third lane, desired speed of 105kph
-- chenyi_AI11 drives in second lane, desired speed of 105kph
-- chenyi_AI12 drives on fourth lane, desired speed of 101kph
+- chenyi_AI3 drives on third lane, desired speed of 110kph
+- chenyi_AI4 drives on second lane, desired speed of 112kph
+- chenyi_AI5 drives in fourth lane, desired speed of 112kph
+- chenyi_AI6 drives on third lane, desired speed of 112kph
+- chenyi_AI7 drives on second lane, desired speed of 110kph
+- chenyi_AI8 drives in first lane, desired speed of 104kph
+- chenyi_AI9 drives on fourth lane, desired speed of 114kph
+- chenyi_AI10 drives on third lane, desired speed of 114kph
+- chenyi_AI11 drives in second lane, desired speed of 114kph
+- chenyi_AI12 drives on fourth lane, desired speed of 110kph
 - chenyi cars are very basic robots created using the first and a bit of the second chapter of the TORCS robot tutorial
+- Ch 1,2,3 are all that are needed for lane-driving, the advanced utilities do not work and are not needed 
 
 Things to work on:
 
@@ -57,7 +58,6 @@ Note: [faster cars tally behind the slower ones, given how desired speeds are se
 - Create a three-lane and two-lane tracks -- done
 - Create four-lane track -- done
 - Make chenyi cars drive in lanes in the four-lane track -- done 
-- Make complicated test car drive in lanes with highway-like speed --
 - Define rules for lane change and lane keep based on desired speed --
 - Create a spectrum of drivers, ranging from very safe to very aggressive driving behavious, by modifying parameters in the existing racing driver codes --
 - Create overtaking situations in four-lane track using the freelane (left-most lane) -- 
