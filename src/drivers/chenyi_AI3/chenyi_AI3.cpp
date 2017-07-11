@@ -143,14 +143,17 @@ bool isStuck(tCarElt* car)
 }
 
 const float GAUSSIAN_DENOMINATOR = 2.0*0.3*3.8*0.3*3.8; /* [m2] */
-/* compute "lane" potential, assuming lane width of 3.8m and 4-lane track-> 3 lane edges */
-float lanePotential(tCarElt* car)
+/* compute "lane" potential, assuming lane width of 3.8m and 4-lane track-> 3 lane edges and 2 road edges*/
+// for indexing of road and lane edges, followed the same directional convention as for lanes
+float environmentPotential(tCarElt* car)
 {
     float cur_y = car->_trkPos.toMiddle + 5.7;
-    float U_lane1 = 2*exp(-pow(cur_y-9.5,2)/GAUSSIAN_DENOMINATOR);
-    float U_lane2 = 2*exp(-pow(cur_y-5.7,2)/GAUSSIAN_DENOMINATOR);
-    float U_lane3 = 2*exp(-pow(cur_y-1.9,2)/GAUSSIAN_DENOMINATOR);
-    return U_lane1 + U_lane2 + U_lane3; 
+    float U_lane1 = 2.0*exp(-pow(cur_y-9.5,2)/GAUSSIAN_DENOMINATOR);
+    float U_lane2 = 2.0*exp(-pow(cur_y-5.7,2)/GAUSSIAN_DENOMINATOR);
+    float U_lane3 = 2.0*exp(-pow(cur_y-1.9,2)/GAUSSIAN_DENOMINATOR);
+    float U_road1 = 1.5*pow(1.0/(cur_y-13.8),2);
+    float U_road2 = 1.5*pow(1.0/(cur_y+2.4),2);
+    return U_road2 + U_road1 + U_lane3 + U_lane2 + U_lane1;
 }
 
 /* Drive during race. */
