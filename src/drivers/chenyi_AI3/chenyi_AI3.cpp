@@ -180,6 +180,25 @@ float getEnvironmentPotential(tCarElt* car)
 //     }
 // }
 
+float getPotentialGradientY(tCarElt* car)
+{
+    float cur_y = car->_trkPos.toMiddle + 5.7;
+    float uLane1GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*5.0)/GAUSSIAN_DENOMINATOR);
+    float uLane2GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*3.0)/GAUSSIAN_DENOMINATOR);
+    float uLane3GradY = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0)/GAUSSIAN_DENOMINATOR);
+    float uRoad1GradY = 0.5*_neta*(-2)*pow(1.0/(cur_y - (deltaLane/2.0*7.0 + 0.5)), 3);
+    float uRoad2GradY = 0.5*_neta*(-2)*pow(1.0/(cur_y - (-deltaLane -0.5)), 3);
+    float uCarGradY = 0.0; // check behaviour without obstacles
+    return uLane1GradY + uLane2GradY + uLane3GradY + uRoad1GradY + uRoad2GradY + uCarGradY;
+}
+
+float getPotentialGradientX(tCarElt* car, double desired_speed)
+{
+    float uVelGradX = _gamma*(car->pub.speed - desired_speed);
+    float uCarGradX = 0.0; // check behaviour without obstacles
+    return uVelGradX + uCarGradX;
+}
+
 /* Drive during race. */
 
 const double desired_speed=101/3.6;
