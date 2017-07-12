@@ -144,8 +144,8 @@ bool isStuck(tCarElt* car)
 
 const int nLanes = 4;
 const float deltaLane = 3.8;
-const float W = ;
-const float L = ;
+// const float W = ;
+// const float L = ;
 const float Alane = 2;
 const float _sigma = 0.3*deltaLane;
 const float _neta = 3;
@@ -169,16 +169,16 @@ float getEnvironmentPotential(tCarElt* car)
     return uRoad2 + uRoad1 + uLane3 + uLane2 + uLane1;
 }
 
-float getCarVelocityPotentials(tCarElt* car)
-{
-    float uVel = _gamma*();
-    float uCar = 0.0;
-    int m = ; // number of relevant obstacle cars
-    for (int i = 0; i < m; i++) {
-        float K = ; // pseudo-distance to m-th obstacle car
-        uCar += Acar*exp(-_alpha*K)/K;
-    }
-}
+// float getCarVelocityPotentials(tCarElt* car)
+// {
+//     float uVel = _gamma*();
+//     float uCar = 0.0;
+//     int m = ; // number of relevant obstacle cars
+//     for (int i = 0; i < m; i++) {
+//         float K = ; // pseudo-distance to m-th obstacle car
+//         uCar += Acar*exp(-_alpha*K)/K;
+//     }
+// }
 
 /* Drive during race. */
 
