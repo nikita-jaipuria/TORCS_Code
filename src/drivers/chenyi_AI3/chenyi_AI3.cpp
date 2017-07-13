@@ -171,13 +171,15 @@ float getEnvironmentPotential(tCarElt* car)
 
 // float getCarVelocityPotentials(tCarElt* car)
 // {
-//     float uVel = _gamma*();
-//     float uCar = 0.0;
+//     float cur_x = ;
+//     float uVel = _gamma*(car->pub.speed - desired_speed)*cur_x;
+//     float uCar = ; 
 //     int m = ; // number of relevant obstacle cars
 //     for (int i = 0; i < m; i++) {
 //         float K = ; // pseudo-distance to m-th obstacle car
-//         uCar += Acar*exp(-_alpha*K)/K;
+//         uCar += Acar*exp( - _alpha*K)/K;
 //     }
+//     return UVel + uCar;
 // }
 
 float getPotentialGradientY(tCarElt* car)
@@ -192,9 +194,9 @@ float getPotentialGradientY(tCarElt* car)
     return uLane1GradY + uLane2GradY + uLane3GradY + uRoad1GradY + uRoad2GradY + uCarGradY;
 }
 
-float getPotentialGradientX(tCarElt* car, double desired_speed)
+float getPotentialGradientX(tCarElt* car, double speed)
 {
-    float uVelGradX = _gamma*(car->pub.speed - desired_speed);
+    float uVelGradX = _gamma*(car->pub.speed - speed);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
 }
@@ -239,6 +241,14 @@ static void drive(int index, tCarElt* car, tSituation *s)
            car->ctrl.brakeCmd=0.0;
         }
 
+        float fx = -getPotentialGradientX(car, desired_speed);
+        float fy = -getPotentialGradientY(car);
+
+        // Transform force obtained in Frenet coordinates into the car axis FOR for control
+        float gain = 1.0;
+        float accel_x = gain*(fx*cos(angle) + fy*sin(angle));
+        float accel_y = gain*(-fx*sin(angle) + fy*cos(angle));
+        // printf("%f, %f\n", accel_x, accel_y);
     }    
 }
 
