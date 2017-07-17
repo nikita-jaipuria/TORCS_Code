@@ -226,29 +226,52 @@ static void drive(int index, tCarElt* car, tSituation *s)
 
         angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
         NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
-        angle -= SC*(car->_trkPos.toMiddle+keepLR)/car->_trkPos.seg->width;
-
-        // set up the values to return
-        car->ctrl.steer = angle / car->_steerLock;
-        car->ctrl.gear = getGear(car);
-
-        if (car->_speed_x>desired_speed) {
-           car->ctrl.brakeCmd=0.5;
-           car->ctrl.accelCmd=0.0;
-        }
-        else if  (car->_speed_x<desired_speed) {
-           car->ctrl.accelCmd=0.5;
-           car->ctrl.brakeCmd=0.0;
-        }
+        // angle -= SC*(car->_trkPos.toMiddle+keepLR)/car->_trkPos.seg->width;
 
         float fx = -getPotentialGradientX(car, desired_speed);
         float fy = -getPotentialGradientY(car);
 
         // Transform force obtained in Frenet coordinates into the car axis FOR for control
-        float gain = 1.0;
+        float gain = 3.0;
         float accel_x = gain*(fx*cos(angle) + fy*sin(angle));
         float accel_y = gain*(-fx*sin(angle) + fy*cos(angle));
-        // printf("%f, %f\n", accel_x, accel_y);
+        float accel_mag = sqrt(pow(accel_x,2) + pow(accel_y,2));
+        float desired_angle = atan(accel_y/accel_x);
+        NORM_PI_PI(desired_angle); // put the angle back in the range from -PI to PI
+        printf("%f, %f, %f, %f\n", accel_x, accel_y, desired_angle, car->_trkPos.toMiddle);
+
+        car->ctrl.steer = -desired_angle / car->_steerLock;
+        car->ctrl.gear = getGear(car);
+
+        if (-desired_angle > -PI/2.0  && -desired_angle < PI/2.0) {
+            if (accel_mag/15.0 < 1.0) {
+                car->ctrl.accelCmd = accel_mag/15.0;
+            }
+            else {
+                car->ctrl.accelCmd = 1.0;
+            }
+        }
+        else {
+            if (accel_mag/15.0 < 1.0) {
+                car->ctrl.brakeCmd = accel_mag/15.0;
+            }
+            else {
+                car->ctrl.brakeCmd = 1.0;
+            }
+        }
+
+        // // set up the values to return
+        // car->ctrl.steer = angle / car->_steerLock;
+        // car->ctrl.gear = getGear(car);
+
+        // if (car->_speed_x>desired_speed) {
+        //    car->ctrl.brakeCmd=0.5;
+        //    car->ctrl.accelCmd=0.0;
+        // }
+        // else if  (car->_speed_x<desired_speed) {
+        //    car->ctrl.accelCmd=0.5;
+        //    car->ctrl.brakeCmd=0.0;
+        // }
     }    
 }
 
