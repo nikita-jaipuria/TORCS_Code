@@ -211,10 +211,11 @@ const double desired_speed=101/3.6;
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 
     memset(&car->ctrl, 0, sizeof(tCarCtrl));
-    if (!myfile) {
-        myfile.reset(new std::ofstream());
-        myfile->open ("sensor_readings.txt","w+");
-    }
+    // if (!myfile) {
+    //     myfile.reset(new std::ofstream());
+    //     myfile->open ("sensor_readings.txt","w+");
+    // }
+
     if (isStuck(car)) {
         float angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
         NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
@@ -242,25 +243,23 @@ static void drive(int index, tCarElt* car, tSituation *s)
         float desired_angle = atan(accel_y/accel_x);
         NORM_PI_PI(desired_angle); // put the angle back in the range from -PI to PI
 
-        std::ofstream myfile;
-        
-        myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;
-    
+        // std::ofstream myfile;        
+        // myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;   
         
         car->ctrl.steer = desired_angle / car->_steerLock;
         car->ctrl.gear = getGear(car);
-
+        float accel_mag_norm = 1.25*accel_mag/15.0; //to make car achieve desired speed
         if (-desired_angle > -PI/2.0  && -desired_angle < PI/2.0) {
-            if (accel_mag/15.0 < 1.0) {
-                car->ctrl.accelCmd = accel_mag/15.0;
+            if (accel_mag_norm < 1.0) {
+                car->ctrl.accelCmd = accel_mag_norm;
             }
             else {
                 car->ctrl.accelCmd = 1.0;
             }
         }
         else {
-            if (accel_mag/15.0 < 1.0) {
-                car->ctrl.brakeCmd = accel_mag/15.0;
+            if (accel_mag_norm < 1.0) {
+                car->ctrl.brakeCmd = accel_mag_norm;
             }
             else {
                 car->ctrl.brakeCmd = 1.0;
