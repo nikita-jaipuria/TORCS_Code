@@ -23,7 +23,7 @@ SHIP        = ${ROBOT}.xml pw-evoviwrc.rgb logo.rgb
 SHIPSUBDIRS = 
 
 PKGSUBDIRS  = ${SHIPSUBDIRS}
-src-robots-chenyi_AI3_PKGFILES = $(shell find * -maxdepth 0 -type f -print)
-src-robots-chenyi_AI3_PKGDIR   = ${PACKAGE}-${VERSION}/$(subst ${TORCS_BASE},,$(shell pwd))
+src-robots-nikita_AI3_PKGFILES = $(shell find * -maxdepth 0 -type f -print)
+src-robots-nikita_AI3_PKGDIR   = ${PACKAGE}-${VERSION}/$(subst ${TORCS_BASE},,$(shell pwd))
 
 include ${MAKE_DEFAULT}
