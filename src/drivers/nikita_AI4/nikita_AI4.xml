@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    file                 : chenyi_AI5.xml
-    created              : 2014年 09月 01日 星期一 13:08:34 EDT
+    file                 : chenyi_AI4.xml
+    created              : 2014年 09月 01日 星期一 13:08:30 EDT
     copyright            : (C) 2002 Chenyi Chen
 -->
 
@@ -11,17 +11,17 @@
 <!--    (at your option) any later version.                                   -->
 
 <!DOCTYPE params SYSTEM "../../libs/tgf/params.dtd">
-<params name="chenyi_AI5" type="robotdef">
+<params name="nikita_AI4" type="robotdef">
   <section name="Robots">
     <section name="index">
       <section name="1">
-	<attstr name="name" val="chenyi_AI5"></attstr>
+	<attstr name="name" val="nikita_AI4"></attstr>
 	<attstr name="desc" val=""></attstr>
 	<attstr name="team" val=""></attstr>
-	<attstr name="author" val="Chenyi Chen"></attstr>
-	<!--<attstr name="car name" val="pw-corollawrc"></attstr>-->
-        <!--<attstr name="car name" val="kc-a110"></attstr>-->
-<attstr name="car name" val="kc-bigh"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<!--<attstr name="car name" val="kc-gt40"></attstr>-->
+        <!--<attstr name="car name" val="kc-dino"></attstr>-->
+<attstr name="car name" val="kc-conrero"></attstr>
 	<attstr name="category" val="Offroad-4WD-GrA"></attstr>
 	<attnum name="race number" val="0"></attnum>
 	<attnum name="red" val="1.0"></attnum>

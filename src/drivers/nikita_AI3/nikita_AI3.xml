@@ -11,14 +11,14 @@
 <!--    (at your option) any later version.                                   -->
 
 <!DOCTYPE params SYSTEM "../../libs/tgf/params.dtd">
-<params name="chenyi_AI3" type="robotdef">
+<params name="nikita_AI3" type="robotdef">
   <section name="Robots">
     <section name="index">
       <section name="1">
-	<attstr name="name" val="chenyi_AI3"></attstr>
+	<attstr name="name" val="nikita_AI3"></attstr>
 	<attstr name="desc" val=""></attstr>
 	<attstr name="team" val=""></attstr>
-	<attstr name="author" val="Chenyi Chen"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
 	<!--<attstr name="car name" val="kc-giulietta"></attstr>-->
         <!--<attstr name="car name" val="kc-daytona"></attstr>-->
 <attstr name="car name" val="kc-p4"></attstr>

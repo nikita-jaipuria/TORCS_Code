@@ -1,7 +1,7 @@
 /***************************************************************************
 
-    file                 : chenyi_AI3.cpp
-    created              : 2014年 09月 01日 星期一 13:08:25 EDT
+    file                 : chenyi_AI4.cpp
+    created              : 2014年 09月 01日 星期一 13:08:30 EDT
     copyright            : (C) 2002 Chenyi Chen
 
  ***************************************************************************/
@@ -18,6 +18,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
 #include <boost/shared_ptr.hpp>
 #include <stdio.h>
 #include <iostream>
@@ -47,11 +48,11 @@ static int  InitFuncPt(int index, void *pt);
  * Module entry point  
  */ 
 extern "C" int 
-chenyi_AI3(tModInfo *modInfo) 
+nikita_AI4(tModInfo *modInfo) 
 {
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
-    modInfo->name    = strdup("chenyi_AI3");		/* name of the module (short) */
+    modInfo->name    = strdup("nikita_AI4");		/* name of the module (short) */
     modInfo->desc    = strdup("");	/* description of the module (can be long) */
     modInfo->fctInit = InitFuncPt;		/* init function */
     modInfo->gfId    = ROB_IDENT;		/* supported framework version */
@@ -204,17 +205,13 @@ float getPotentialGradientX(tCarElt* car, double speed)
 }
 
 /* Drive during race. */
-boost::shared_ptr<std::ofstream> myfile;
-const double desired_speed=101/3.6;
-//double keepLR=1.9;// for three-lane
+
+double desired_speed=103/3.6;
+// double keepLR=-1.9;   // for second-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 
     memset(&car->ctrl, 0, sizeof(tCarCtrl));
-    // if (!myfile) {
-    //     myfile.reset(new std::ofstream());
-    //     myfile->open ("sensor_readings.txt","w+");
-    // }
 
     if (isStuck(car)) {
         float angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
@@ -236,7 +233,7 @@ static void drive(int index, tCarElt* car, tSituation *s)
         float fy = -getPotentialGradientY(car);
 
         // Transform force obtained in Frenet coordinates into the car axis FOR for control
-        float gain = 3.5;
+        float gain = 2.0;
         float accel_x = gain*(fx*cos(angle) - fy*sin(angle));
         float accel_y = gain*(fx*sin(angle) + fy*cos(angle));
         float accel_mag = sqrt(pow(accel_x,2) + pow(accel_y,2));
@@ -248,7 +245,7 @@ static void drive(int index, tCarElt* car, tSituation *s)
         
         car->ctrl.steer = desired_angle / car->_steerLock;
         car->ctrl.gear = getGear(car);
-        float accel_mag_norm = 1.25*accel_mag/15.0; //to make car achieve desired speed
+        float accel_mag_norm = accel_mag/15.0; //to make car achieve desired speed
         if (-desired_angle > -PI/2.0  && -desired_angle < PI/2.0) {
             if (accel_mag_norm < 1.0) {
                 car->ctrl.accelCmd = accel_mag_norm;
@@ -266,6 +263,8 @@ static void drive(int index, tCarElt* car, tSituation *s)
             }
         }
 
+        // angle -= SC*(car->_trkPos.toMiddle+keepLR)/car->_trkPos.seg->width;
+
         // // set up the values to return
         // car->ctrl.steer = angle / car->_steerLock;
         // car->ctrl.gear = getGear(car);
@@ -278,6 +277,7 @@ static void drive(int index, tCarElt* car, tSituation *s)
         //    car->ctrl.accelCmd=0.5;
         //    car->ctrl.brakeCmd=0.0;
         // }
+
     }    
 }
 
@@ -291,6 +291,5 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
-    if (myfile) myfile->close();
 }
 

@@ -13,7 +13,7 @@
 #
 ##############################################################################
 
-ROBOT       = chenyi_AI4
+ROBOT       = nikita_AI4
 MODULE      = ${ROBOT}.so
 MODULEDIR   = drivers/${ROBOT}
 SOURCES     = ${ROBOT}.cpp

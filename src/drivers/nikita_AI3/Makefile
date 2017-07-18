@@ -1,7 +1,7 @@
 ##############################################################################
 #
 #    file                 : Makefile
-#    created              : 2014年 09月 01日 星期一 13:08:34 EDT
+#    created              : 2014年 09月 01日 星期一 13:08:25 EDT
 #    copyright            : (C) 2002 Chenyi Chen
 #
 ##############################################################################
@@ -13,7 +13,7 @@
 #
 ##############################################################################
 
-ROBOT       = chenyi_AI5
+ROBOT       = nikita_AI3
 MODULE      = ${ROBOT}.so
 MODULEDIR   = drivers/${ROBOT}
 SOURCES     = ${ROBOT}.cpp
@@ -23,7 +23,7 @@ SHIP        = ${ROBOT}.xml pw-evoviwrc.rgb logo.rgb
 SHIPSUBDIRS = 
 
 PKGSUBDIRS  = ${SHIPSUBDIRS}
-src-robots-chenyi_AI5_PKGFILES = $(shell find * -maxdepth 0 -type f -print)
-src-robots-chenyi_AI5_PKGDIR   = ${PACKAGE}-${VERSION}/$(subst ${TORCS_BASE},,$(shell pwd))
+src-robots-chenyi_AI3_PKGFILES = $(shell find * -maxdepth 0 -type f -print)
+src-robots-chenyi_AI3_PKGDIR   = ${PACKAGE}-${VERSION}/$(subst ${TORCS_BASE},,$(shell pwd))
 
 include ${MAKE_DEFAULT}

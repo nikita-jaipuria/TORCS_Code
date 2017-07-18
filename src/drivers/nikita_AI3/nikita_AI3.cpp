@@ -1,7 +1,7 @@
 /***************************************************************************
 
-    file                 : chenyi_AI5.cpp
-    created              : 2014年 09月 01日 星期一 13:08:34 EDT
+    file                 : chenyi_AI3.cpp
+    created              : 2014年 09月 01日 星期一 13:08:25 EDT
     copyright            : (C) 2002 Chenyi Chen
 
  ***************************************************************************/
@@ -19,7 +19,10 @@
 #include <windows.h>
 #endif
 
+#include <boost/shared_ptr.hpp>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h> 
 #include <string.h> 
 #include <math.h>
@@ -45,11 +48,11 @@ static int  InitFuncPt(int index, void *pt);
  * Module entry point  
  */ 
 extern "C" int 
-chenyi_AI5(tModInfo *modInfo) 
+nikita_AI3(tModInfo *modInfo) 
 {
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
-    modInfo->name    = strdup("chenyi_AI5");		/* name of the module (short) */
+    modInfo->name    = strdup("nikita_AI3");		/* name of the module (short) */
     modInfo->desc    = strdup("");	/* description of the module (can be long) */
     modInfo->fctInit = InitFuncPt;		/* init function */
     modInfo->gfId    = ROB_IDENT;		/* supported framework version */
@@ -142,16 +145,77 @@ bool isStuck(tCarElt* car)
     }
 }
 
+const int nLanes = 4;
+const float deltaLane = 3.8;
+// const float W = ;
+// const float L = ;
+const float Alane = 2;
+const float _sigma = 0.3*deltaLane;
+const float _neta = 3;
+const float Acar = 10;
+const float _alpha = 0.5;
+const float delta_t = -0.5;
+const float _beta = 0.6;
+const float Tf = 3;
+const float _gamma = 0.2; //tuned to work with TORCS
+const float GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
+
+// for indexing of road and lane edges, followed the same directional convention as for lanes
+float getEnvironmentPotential(tCarElt* car)
+{
+    float cur_y = car->_trkPos.toMiddle + 5.7;
+    float uLane1 = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uLane2 = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uLane3 = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR);
+    float uRoad1 = 0.5*_neta*pow(1.0/(cur_y - (deltaLane/2.0*7.0 + 0.5)), 2);
+    float uRoad2 = 0.5*_neta*pow(1.0/(cur_y - (-deltaLane -0.5)), 2);
+    return uRoad2 + uRoad1 + uLane3 + uLane2 + uLane1;
+}
+
+// float getCarVelocityPotentials(tCarElt* car)
+// {
+//     float cur_x = ;
+//     float uVel = _gamma*(car->pub.speed - desired_speed)*cur_x;
+//     float uCar = ; 
+//     int m = ; // number of relevant obstacle cars
+//     for (int i = 0; i < m; i++) {
+//         float K = ; // pseudo-distance to m-th obstacle car
+//         uCar += Acar*exp( - _alpha*K)/K;
+//     }
+//     return UVel + uCar;
+// }
+
+float getPotentialGradientY(tCarElt* car)
+{
+    float cur_y = car->_trkPos.toMiddle + 5.7;
+    float uLane1GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*5.0)/GAUSSIAN_DENOMINATOR);
+    float uLane2GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*3.0)/GAUSSIAN_DENOMINATOR);
+    float uLane3GradY = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0)/GAUSSIAN_DENOMINATOR);
+    float uRoad1GradY = 0.5*_neta*(-2)*pow(1.0/(cur_y - (deltaLane/2.0*7.0 + 0.5)), 3);
+    float uRoad2GradY = 0.5*_neta*(-2)*pow(1.0/(cur_y - (-deltaLane -0.5)), 3);
+    float uCarGradY = 0.0; // check behaviour without obstacles
+    return uLane1GradY + uLane2GradY + uLane3GradY + uRoad1GradY + uRoad2GradY + uCarGradY;
+}
+
+float getPotentialGradientX(tCarElt* car, double speed)
+{
+    float uVelGradX = _gamma*(car->pub.speed - speed);
+    float uCarGradX = 0.0; // check behaviour without obstacles
+    return uVelGradX + uCarGradX;
+}
 
 /* Drive during race. */
-
-double desired_speed=103/3.6;
-//double keepLR=-2.0;   // for two-lane
-double keepLR=5.7;   // for three-lane
+// boost::shared_ptr<std::ofsdouble keepLR=5.7;   // for fourth-lanetream> myfile;
+const double desired_speed=101/3.6;
+//double keepLR=1.9;// for third-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 
     memset(&car->ctrl, 0, sizeof(tCarCtrl));
+    // if (!myfile) {
+    //     myfile.reset(new std::ofstream());
+    //     myfile->open ("sensor_readings.txt","w+");
+    // }
 
     if (isStuck(car)) {
         float angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
@@ -168,21 +232,53 @@ static void drive(int index, tCarElt* car, tSituation *s)
 
         angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
         NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
-        angle -= SC*(car->_trkPos.toMiddle+keepLR)/car->_trkPos.seg->width;
 
-        // set up the values to return
-        car->ctrl.steer = angle / car->_steerLock;
+        float fx = -getPotentialGradientX(car, desired_speed);
+        float fy = -getPotentialGradientY(car);
+
+        // Transform force obtained in Frenet coordinates into the car axis FOR for control
+        float gain = 2.0;
+        float accel_x = gain*(fx*cos(angle) - fy*sin(angle));
+        float accel_y = gain*(fx*sin(angle) + fy*cos(angle));
+        float accel_mag = sqrt(pow(accel_x,2) + pow(accel_y,2));
+        float desired_angle = atan(accel_y/accel_x);
+        NORM_PI_PI(desired_angle); // put the angle back in the range from -PI to PI
+
+        // std::ofstream myfile;        
+        // myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;   
+        
+        car->ctrl.steer = desired_angle / car->_steerLock;
         car->ctrl.gear = getGear(car);
-
-        if (car->_speed_x>desired_speed) {
-           car->ctrl.brakeCmd=0.5;
-           car->ctrl.accelCmd=0.0;
+        float accel_mag_norm = accel_mag/15.0; //to make car achieve desired speed
+        if (-desired_angle > -PI/2.0  && -desired_angle < PI/2.0) {
+            if (accel_mag_norm < 1.0) {
+                car->ctrl.accelCmd = accel_mag_norm;
+            }
+            else {
+                car->ctrl.accelCmd = 1.0;
+            }
         }
-        else if  (car->_speed_x<desired_speed) {
-           car->ctrl.accelCmd=0.5;
-           car->ctrl.brakeCmd=0.0;
+        else {
+            if (accel_mag_norm < 1.0) {
+                car->ctrl.brakeCmd = accel_mag_norm;
+            }
+            else {
+                car->ctrl.brakeCmd = 1.0;
+            }
         }
 
+        // // set up the values to return
+        // car->ctrl.steer = angle / car->_steerLock;
+        // car->ctrl.gear = getGear(car);
+
+        // if (car->_speed_x>desired_speed) {
+        //    car->ctrl.brakeCmd=0.5;
+        //    car->ctrl.accelCmd=0.0;
+        // }
+        // else if  (car->_speed_x<desired_speed) {
+        //    car->ctrl.accelCmd=0.5;
+        //    car->ctrl.brakeCmd=0.0;
+        // }
     }    
 }
 
@@ -196,5 +292,6 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
+    // if (myfile) myfile->close();
 }
 
