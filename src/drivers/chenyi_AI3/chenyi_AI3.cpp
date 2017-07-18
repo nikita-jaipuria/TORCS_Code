@@ -18,8 +18,10 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
+#include <boost/shared_ptr.hpp>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h> 
 #include <string.h> 
 #include <math.h>
@@ -154,9 +156,9 @@ const float _alpha = 0.5;
 const float delta_t = -0.5;
 const float _beta = 0.6;
 const float Tf = 3;
-const float _gamma = 0.2;
+const float _gamma = 0.2; //tuned to work with TORCS
 const float GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
-/* compute "lane" potential, assuming lane width of 3.8m and 4-lane track-> 3 lane edges and 2 road edges*/
+
 // for indexing of road and lane edges, followed the same directional convention as for lanes
 float getEnvironmentPotential(tCarElt* car)
 {
@@ -202,15 +204,17 @@ float getPotentialGradientX(tCarElt* car, double speed)
 }
 
 /* Drive during race. */
-
+boost::shared_ptr<std::ofstream> myfile;
 const double desired_speed=101/3.6;
-//double keepLR=-2.0;   // for two-lane
-double keepLR=1.9;// for three-lane
+//double keepLR=1.9;// for three-lane
 
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 
     memset(&car->ctrl, 0, sizeof(tCarCtrl));
-
+    if (!myfile) {
+        myfile.reset(new std::ofstream());
+        myfile->open ("sensor_readings.txt","w+");
+    }
     if (isStuck(car)) {
         float angle = -RtTrackSideTgAngleL(&(car->_trkPos)) + car->_yaw;
         NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
@@ -226,21 +230,24 @@ static void drive(int index, tCarElt* car, tSituation *s)
 
         angle = RtTrackSideTgAngleL(&(car->_trkPos)) - car->_yaw;
         NORM_PI_PI(angle); // put the angle back in the range from -PI to PI
-        // angle -= SC*(car->_trkPos.toMiddle+keepLR)/car->_trkPos.seg->width;
 
         float fx = -getPotentialGradientX(car, desired_speed);
         float fy = -getPotentialGradientY(car);
 
         // Transform force obtained in Frenet coordinates into the car axis FOR for control
-        float gain = 3.0;
-        float accel_x = gain*(fx*cos(angle) + fy*sin(angle));
-        float accel_y = gain*(-fx*sin(angle) + fy*cos(angle));
+        float gain = 3.5;
+        float accel_x = gain*(fx*cos(angle) - fy*sin(angle));
+        float accel_y = gain*(fx*sin(angle) + fy*cos(angle));
         float accel_mag = sqrt(pow(accel_x,2) + pow(accel_y,2));
         float desired_angle = atan(accel_y/accel_x);
         NORM_PI_PI(desired_angle); // put the angle back in the range from -PI to PI
-        printf("%f, %f, %f, %f\n", accel_x, accel_y, desired_angle, car->_trkPos.toMiddle);
 
-        car->ctrl.steer = -desired_angle / car->_steerLock;
+        std::ofstream myfile;
+        
+        myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;
+    
+        
+        car->ctrl.steer = desired_angle / car->_steerLock;
         car->ctrl.gear = getGear(car);
 
         if (-desired_angle > -PI/2.0  && -desired_angle < PI/2.0) {
@@ -285,5 +292,6 @@ endrace(int index, tCarElt *car, tSituation *s)
 static void
 shutdown(int index)
 {
+    if (myfile) myfile->close();
 }
 
