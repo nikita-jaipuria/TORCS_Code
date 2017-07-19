@@ -26,6 +26,7 @@
 #include <stdlib.h> 
 #include <string.h> 
 #include <math.h>
+#include <eigen3/Eigen/Dense>
 
 #include <tgf.h> 
 #include <track.h> 
@@ -34,7 +35,12 @@
 #include <robottools.h>
 #include <robot.h>
 
-static tTrack	*curTrack;
+#define BOTS 4
+
+static tTrack   *curTrack;
+
+static const char* botname[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4"};
+static const char* botdesc[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4"};
 
 static void initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s); 
 static void newrace(int index, tCarElt* car, tSituation *s); 
@@ -48,16 +54,17 @@ static int  InitFuncPt(int index, void *pt);
  * Module entry point  
  */ 
 extern "C" int 
-nikita_AI3(tModInfo *modInfo) 
+nikita(tModInfo *modInfo) 
 {
     memset(modInfo, 0, 10*sizeof(tModInfo));
 
-    modInfo->name    = strdup("nikita_AI3");		/* name of the module (short) */
-    modInfo->desc    = strdup("");	/* description of the module (can be long) */
-    modInfo->fctInit = InitFuncPt;		/* init function */
-    modInfo->gfId    = ROB_IDENT;		/* supported framework version */
-    modInfo->index   = 1;
-
+    for (int i = 0; i < BOTS; i++) {
+        modInfo[i].name    = strdup(botname[i]);        /* name of the module (short) */
+        modInfo[i].desc    = strdup(botdesc[i]);  /* description of the module (can be long) */
+        modInfo[i].fctInit = InitFuncPt;      /* init function */
+        modInfo[i].gfId    = ROB_IDENT;       /* supported framework version */
+        modInfo[i].index   = i+1;
+    }
     return 0; 
 } 
 
@@ -172,10 +179,10 @@ float getEnvironmentPotential(tCarElt* car)
     return uRoad2 + uRoad1 + uLane3 + uLane2 + uLane1;
 }
 
-// float getCarVelocityPotentials(tCarElt* car)
+// float getCarPotential(tCarElt* car, tSituation* s)
 // {
 //     float cur_x = ;
-//     float uVel = _gamma*(car->pub.speed - desired_speed)*cur_x;
+//     float cur_y = ;
 //     float uCar = ; 
 //     int m = ; // number of relevant obstacle cars
 //     for (int i = 0; i < m; i++) {

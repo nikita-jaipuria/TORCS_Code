@@ -13,7 +13,7 @@
 #
 ##############################################################################
 
-ROBOT       = nikita_AI3
+ROBOT       = nikita
 MODULE      = ${ROBOT}.so
 MODULEDIR   = drivers/${ROBOT}
 SOURCES     = ${ROBOT}.cpp
