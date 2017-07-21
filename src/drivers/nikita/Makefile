@@ -16,7 +16,7 @@
 ROBOT       = nikita
 MODULE      = ${ROBOT}.so
 MODULEDIR   = drivers/${ROBOT}
-SOURCES     = ${ROBOT}.cpp
+SOURCES     = ${ROBOT}.cpp driver.cpp
 
 SHIPDIR     = drivers/${ROBOT}
 SHIP        = ${ROBOT}.xml pw-evoviwrc.rgb logo.rgb

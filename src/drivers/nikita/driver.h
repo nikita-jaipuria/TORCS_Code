@@ -39,7 +39,7 @@
 class Driver {
     public:
         Driver(int index);
-        ~Driver();
+        ~Driver(){};
         /* callback functions called from TORCS */
         void initTrack(tTrack* t, void *carHandle, void **carParmHandle, tSituation *s);
         void newRace(tCarElt* car, tSituation *s);

@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "driver.h"
-
+#include <iostream>
 const float Driver::SHIFT = 0.85;         /* [-] (% of rpmredline) */
 const float Driver::SHIFT_MARGIN = 4.0;  /* [m/s] */
 const float Driver::MAX_UNSTUCK_ANGLE = 30.0/180.0*PI;  /* [radians] */
@@ -38,6 +38,7 @@ const float Driver::GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
 
 Driver::Driver(int index)
 {
+    std::cout << "YAY" << std::endl;
     INDEX = index;
 }
 
