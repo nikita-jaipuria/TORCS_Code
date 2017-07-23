@@ -38,7 +38,7 @@ const float Driver::GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
 
 Driver::Driver(int index)
 {
-    std::cout << "YAY" << std::endl;
+    // std::cout << "YAY" << std::endl;
     INDEX = index;
 }
 
@@ -54,7 +54,7 @@ void Driver::newRace(tCarElt* car, tSituation *s)
 {
     MAX_UNSTUCK_COUNT = int(UNSTUCK_TIME_LIMIT/RCM_MAX_DT_ROBOTS);
     stuck = 0;
-    desired_speed = (101+INDEX-1)/3.6; /* [m/s] */
+    DESIRED_SPEED = (101+INDEX-1)/3.6; /* [m/s] */
 }
 
 /* Drive during race. */
@@ -69,12 +69,14 @@ void Driver::drive(tCarElt* car, tSituation* s)
     // }
 
     if (isStuck(car)) {
+        // std::cout << "OOPS" << INDEX << std::endl;
         car->ctrl.steer = angle / car->_steerLock;
         car->ctrl.gear = -1; // reverse gear
         car->ctrl.accelCmd = 0.3; // 30% accelerator pedal
         car->ctrl.brakeCmd = 0.0; // no brakes
     } 
     else {
+        // std::cout << "YAY" << INDEX << std::endl;
         float fx = -getPotentialGradientX(car);
         float fy = -getPotentialGradientY(car);
 
@@ -118,7 +120,7 @@ void Driver::endRace(tCarElt *car, tSituation *s)
 void Driver::update(tCarElt* car, tSituation *s)
 {
     trackangle = RtTrackSideTgAngleL(&(car->_trkPos));
-    angle = -trackangle + car->_yaw;
+    angle = trackangle - car->_yaw;
     NORM_PI_PI(angle);
 }
 
@@ -199,7 +201,7 @@ float Driver::getPotentialGradientY(tCarElt* car)
 
 float Driver::getPotentialGradientX(tCarElt* car)
 {
-    float uVelGradX = _gamma*(car->pub.speed - desired_speed);
+    float uVelGradX = _gamma*(car->pub.speed - DESIRED_SPEED);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
 }

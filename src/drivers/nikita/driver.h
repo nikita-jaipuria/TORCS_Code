@@ -59,13 +59,13 @@ class Driver {
         int stuck;
         float trackangle;
         float angle;
-        float desired_speed;
-        // float width;
-        // float length;
 
         /* data that should stay constant after first initialization */
         int MAX_UNSTUCK_COUNT;
         int INDEX;
+        float DESIRED_SPEED;
+        // float WIDTH;
+        // float LENGTH;
 
         /* class constants */
         static const float MAX_UNSTUCK_ANGLE;

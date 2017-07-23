@@ -59,7 +59,7 @@ static int  InitFuncPt(int index, void *pt);
 extern "C" int 
 nikita(tModInfo *modInfo) 
 {
-    printf("Module entry point achieved\n");
+    // printf("Module entry point achieved\n");
     memset(modInfo, 0, 10*sizeof(tModInfo));    
     for (int i = 0; i < BOTS; i++) {
         modInfo[i].name    = strdup(botname[i]);        /* name of the module (short) */
@@ -68,7 +68,7 @@ nikita(tModInfo *modInfo)
         modInfo[i].gfId    = ROB_IDENT;       /* supported framework version */
         modInfo[i].index   = i+1;
     }
-    printf("Finished module entry point\n");
+    // printf("Finished module entry point\n");
     return 0; 
 } 
 
@@ -77,8 +77,8 @@ static int
 InitFuncPt(int index, void *pt) 
 { 
     tRobotItf *itf  = (tRobotItf *)pt; 
-    printf("module interface initialized for %d\n",index);    
-    driver[index -1 ] = new Driver(index);
+    // printf("module interface initialized for %d\n",index);    
+    driver[index -1] = new Driver(index);
     itf->rbNewTrack = initTrack; /* Give the robot the track view called */ 
 				 /* for every track change or new race */ 
     itf->rbNewRace  = newrace; 	 // Start a new race 

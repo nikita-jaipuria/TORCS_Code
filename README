@@ -49,7 +49,7 @@ Notes:
 - chenyi_AI11 drives in second lane, desired speed of 114kph
 - chenyi_AI12 drives on fourth lane, desired speed of 110kph
 - chenyi cars are very basic robots created using the first and a bit of the second chapter of the TORCS robot tutorial
-- Ch 1,2,3 are all that are needed for lane-driving, the advanced utilities do not work and are not needed 
+- Ch 1,2,3 are all that are needed for lane-driving, the advanced utilities do not work and are not needed
 
 Things to work on:
 
