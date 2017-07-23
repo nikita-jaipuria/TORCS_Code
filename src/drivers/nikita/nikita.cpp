@@ -108,24 +108,20 @@ newrace(int index, tCarElt* car, tSituation *s)
 static void drive(int index, tCarElt* car, tSituation *s) 
 { 
     // std::cout << "drive" << std::endl;
-    // driver[index-1]->drive(car, s);   
+    driver[index-1]->drive(car, s);   
 }
 
 /* End of the current race */
 static void
 endrace(int index, tCarElt *car, tSituation *s)
 {    
-    // driver[index-1]->endRace(car, s);
+    driver[index-1]->endRace(car, s);
 }
 
 /* Called before the module is unloaded */
 static void
 shutdown(int index)
 {
-    for (int i = 0; i < BOTS; ++i) 
-    {
-        Driver * tmp = driver[i];
-        delete tmp;
-    }
+     delete driver[index-1];             
 }
 
