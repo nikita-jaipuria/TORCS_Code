@@ -55,7 +55,9 @@ void Driver::newRace(tCarElt* car, tSituation *s)
     MAX_UNSTUCK_COUNT = int(UNSTUCK_TIME_LIMIT/RCM_MAX_DT_ROBOTS);
     stuck = 0;
     DESIRED_SPEED = (100+INDEX*2-1)/3.6; /* [m/s] */
-    // std::cout << MAX_UNSTUCK_COUNT << DESIRED_SPEED << INDEX << std::endl;
+    /* initialize the list of opponents */
+    // opponents = new Opponents(s, this);
+    // opponent = opponents->getOpponentPtr();
 }
 
 /* Drive during race. */
@@ -125,6 +127,8 @@ void Driver::update(tCarElt* car, tSituation *s)
     NORM_PI_PI(angle);
     cur_y = car->_trkPos.toMiddle + 5.7;
     // cur_x = 
+    speed = Opponent::getSpeed(car);
+    // opponents->update(s, this);
 }
 
 /* Check if I'm stuck */
@@ -200,7 +204,12 @@ float Driver::getPotentialGradientY(tCarElt* car)
 
 float Driver::getPotentialGradientX(tCarElt* car)
 {
-    float uVelGradX = _gamma*(car->pub.speed - DESIRED_SPEED);
+    float uVelGradX = _gamma*(speed - DESIRED_SPEED);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
+}
+
+Driver::~Driver()
+{
+    // delete opponents;
 }

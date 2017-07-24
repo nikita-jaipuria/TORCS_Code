@@ -35,11 +35,14 @@
 #include <robottools.h>
 #include <robot.h>
 #include "linalg.h"
+#include "opponent.h"
+class Opponents;
+class Opponent;
 
 class Driver {
     public:
         Driver(int index);
-        ~Driver(){};
+        ~Driver();
         /* callback functions called from TORCS */
         void initTrack(tTrack* t, void *carHandle, void **carParmHandle, tSituation *s);
         void newRace(tCarElt* car, tSituation *s);
@@ -57,6 +60,9 @@ class Driver {
         // float getCarPotential(tCarElt* car, tSituation* s);
         float getPotentialGradientY(tCarElt* car);
         float getPotentialGradientX(tCarElt* car);
+
+        // Opponents *opponents;
+        // Opponent *opponent;
 
         /* per robot global data */
         int stuck;
