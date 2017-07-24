@@ -54,7 +54,8 @@ void Driver::newRace(tCarElt* car, tSituation *s)
 {
     MAX_UNSTUCK_COUNT = int(UNSTUCK_TIME_LIMIT/RCM_MAX_DT_ROBOTS);
     stuck = 0;
-    DESIRED_SPEED = (101+INDEX-1)/3.6; /* [m/s] */
+    DESIRED_SPEED = (100+INDEX*2-1)/3.6; /* [m/s] */
+    // std::cout << MAX_UNSTUCK_COUNT << DESIRED_SPEED << INDEX << std::endl;
 }
 
 /* Drive during race. */

@@ -102,7 +102,7 @@ initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSitu
 static void  
 newrace(int index, tCarElt* car, tSituation *s) 
 {
-    driver[index-1]->newRace(car, s);     
+    driver[index-1]->newRace(car, s);
 } 
 
 static void drive(int index, tCarElt* car, tSituation *s) 
