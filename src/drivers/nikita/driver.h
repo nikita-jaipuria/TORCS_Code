@@ -66,6 +66,7 @@ class Driver {
         float getAllowedSpeed(tTrackSeg *segment);
         float getDistToSegEnd();
         float filterBColl(float brake); 
+        float filterSColl(float steer);
 
         Opponents *opponents;
         Opponent *opponent;
@@ -107,6 +108,7 @@ class Driver {
         static const float Tf;
         static const float _gamma; //tuned to work with TORCS
         static const float GAUSSIAN_DENOMINATOR; /* [m2] */
+        static const float SIDECOLL_MARGIN;
 
         /* track variables */
         tTrack* track;

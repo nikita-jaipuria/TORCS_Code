@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "driver.h"
-#include <iostream>
 const float Driver::SHIFT = 0.85;         /* [-] (% of rpmredline) */
 const float Driver::SHIFT_MARGIN = 4.0;  /* [m/s] */
 const float Driver::MAX_UNSTUCK_ANGLE = 30.0/180.0*PI;  /* [radians] */
@@ -35,6 +34,7 @@ const float Driver::_beta = 0.6;
 const float Driver::Tf = 3;
 const float Driver::_gamma = 0.2; //tuned to work with TORCS
 const float Driver::GAUSSIAN_DENOMINATOR = 2.0*_sigma*_sigma; /* [m2] */
+const float Driver::SIDECOLL_MARGIN = 2.0;   /* [m] */
 
 Driver::Driver(int index)
 {
@@ -97,7 +97,7 @@ void Driver::drive(tCarElt* car, tSituation* s)
         NORM_PI_PI(steerangle); // put the angle back in the range from -PI to PI
         // std::ofstream myfile;        
         // myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;           
-        car->ctrl.steer = steerangle / car->_steerLock;
+        car->ctrl.steer = filterSColl(steerangle / car->_steerLock);
         car->ctrl.gear = getGear(car);
         car->ctrl.brakeCmd = filterBColl(getBrake());
         float accel_mag_norm = accel_mag/15.0; //to make car achieve desired speed
@@ -236,6 +236,43 @@ float Driver::filterBColl(float brake)
         }
     }
     return brake;
+}
+
+/* Steer filter for collision avoidance */
+float Driver::filterSColl(float steer)
+{
+    int i;
+    float sidedist = 0.0, fsidedist = 0.0, minsidedist = FLT_MAX;
+    Opponent *o = NULL;
+
+    /* get the index of the nearest car (o) */
+    for (i = 0; i < opponents->getNOpponents(); i++) {
+        if (opponent[i].getState() & OPP_SIDE) {
+            sidedist = opponent[i].getSideDist();
+            fsidedist = fabs(sidedist);
+            if (fsidedist < minsidedist) {
+                minsidedist = fsidedist;
+                o = &opponent[i];
+            }
+        }
+    }
+    /* if there is another car handle the situation */
+    if (o != NULL) {
+        float d = fsidedist - o->getWidth();
+        /* near enough */
+        if (d < SIDECOLL_MARGIN) {
+            /* compute angle between cars */
+            tCarElt *ocar = o->getCarPtr();
+            float diffangle = ocar->_yaw - car->_yaw;
+            NORM_PI_PI(diffangle);
+            const float c = SIDECOLL_MARGIN/2.0;
+            d = d - c;
+            if (d < 0.0) d = 0.0;
+            float psteer = diffangle/car->_steerLock;
+            return steer*(d/c) + 2.0*psteer*(1.0-d/c);
+        }
+    }
+    return steer;
 }
 
 float Driver::getBrake()
