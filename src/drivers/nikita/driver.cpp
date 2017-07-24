@@ -55,6 +55,10 @@ void Driver::newRace(tCarElt* car, tSituation *s)
     MAX_UNSTUCK_COUNT = int(UNSTUCK_TIME_LIMIT/RCM_MAX_DT_ROBOTS);
     stuck = 0;
     this->car = car;
+    CARMASS = GfParmGetNum(car->_carHandle, SECT_CAR, PRM_MASS, NULL, 1000.0);
+    initCa();
+    initCw();
+    mass = CARMASS + car->_fuel;
     DESIRED_SPEED = (100+INDEX*2-1)/3.6; /* [m/s] */
     /* initialize the list of opponents */
     opponents = new Opponents(s, this);
@@ -95,6 +99,7 @@ void Driver::drive(tCarElt* car, tSituation* s)
         // myfile << accel_x << "," << accel_y << "," << desired_angle << "," << car->_trkPos.toMiddle << std::endl;           
         car->ctrl.steer = steerangle / car->_steerLock;
         car->ctrl.gear = getGear(car);
+        car->ctrl.brakeCmd = filterBColl(getBrake());
         float accel_mag_norm = accel_mag/15.0; //to make car achieve desired speed
         if (steerangle > -PI/2.0  && steerangle < PI/2.0) {
             if (accel_mag_norm < 1.0) {
@@ -208,6 +213,110 @@ float Driver::getPotentialGradientX(tCarElt* car)
     float uVelGradX = _gamma*(speed - DESIRED_SPEED);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
+}
+
+/* Brake filter for collision avoidance */
+float Driver::filterBColl(float brake)
+{
+    float currentspeedsqr = car->_speed_x*car->_speed_x;
+    float mu = car->_trkPos.seg->surface->kFriction;
+    float cm = mu*G*mass;
+    float ca = CA*mu + CW;
+    int i;
+
+    for (i = 0; i < opponents->getNOpponents(); i++) {
+        if (opponent[i].getState() & OPP_COLL) {
+            float allowedspeedsqr = opponent[i].getSpeed();
+            allowedspeedsqr *= allowedspeedsqr;
+            float brakedist = mass*(currentspeedsqr - allowedspeedsqr) /
+                              (2.0*(cm + allowedspeedsqr*ca));
+            if (brakedist > opponent[i].getDistance()) {
+                return 1.0;
+            }
+        }
+    }
+    return brake;
+}
+
+float Driver::getBrake()
+{
+    tTrackSeg *segptr = car->_trkPos.seg;
+    float currentspeedsqr = car->_speed_x*car->_speed_x;
+    float mu = segptr->surface->kFriction;
+    float maxlookaheaddist = currentspeedsqr/(2.0*mu*G);
+    float lookaheaddist = getDistToSegEnd();
+    float allowedspeed = getAllowedSpeed(segptr);
+    if (allowedspeed < car->_speed_x) return 1.0;
+    segptr = segptr->next;
+    while (lookaheaddist < maxlookaheaddist) {
+        allowedspeed = getAllowedSpeed(segptr);
+        if (allowedspeed < car->_speed_x) {
+            float allowedspeedsqr = allowedspeed*allowedspeed;
+            float brakedist = mass*(currentspeedsqr - allowedspeedsqr) / (2.0*(mu*G*mass + allowedspeedsqr*(CA*mu + CW)));
+            if (brakedist > lookaheaddist) {
+                return 1.0;
+            }
+        }
+        lookaheaddist += segptr->length;
+        segptr = segptr->next;
+    }
+    return 0.0;
+}
+
+/* Compute aerodynamic downforce coefficient CA */
+void Driver::initCa()
+{
+    char *WheelSect[4] = {SECT_FRNTRGTWHEEL, SECT_FRNTLFTWHEEL, SECT_REARRGTWHEEL, SECT_REARLFTWHEEL};
+    float rearwingarea = GfParmGetNum(car->_carHandle, SECT_REARWING, PRM_WINGAREA, (char*) NULL, 0.0);
+    float rearwingangle = GfParmGetNum(car->_carHandle, SECT_REARWING, PRM_WINGANGLE, (char*) NULL, 0.0);
+    float wingca = 1.23*rearwingarea*sin(rearwingangle);
+    float cl = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS, PRM_FCL, (char*) NULL, 0.0) + GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS, PRM_RCL, (char*) NULL, 0.0);
+    float h = 0.0;
+    int i;
+    for (i = 0; i < 4; i++)
+        h += GfParmGetNum(car->_carHandle, WheelSect[i], PRM_RIDEHEIGHT, (char*) NULL, 0.20);
+        h*= 1.5; h = h*h; h = h*h; h = 2.0 * exp(-3.0*h);
+        CA = h*cl + 4.0*wingca;
+}
+
+/* Compute aerodynamic drag coefficient CW */
+void Driver::initCw()
+{
+    float cx = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS,
+                            PRM_CX, (char*) NULL, 0.0);
+    float frontarea = GfParmGetNum(car->_carHandle, SECT_AERODYNAMICS,
+                                   PRM_FRNTAREA, (char*) NULL, 0.0);
+    CW = 0.645*cx*frontarea;
+}
+
+/* Compute the allowed speed on a segment */
+float Driver::getAllowedSpeed(tTrackSeg *segment)
+{
+    if (segment->type == TR_STR) {
+        return FLT_MAX;
+    } else {
+        float arc = 0.0;
+        tTrackSeg *s = segment;
+        
+        while (s->type == segment->type && arc < PI/2.0) {
+            arc += s->arc;
+            s = s->next;
+        }
+        arc /= PI/2.0;
+        float mu = segment->surface->kFriction;
+        float r = (segment->radius + segment->width/2.0)/sqrt(arc);
+        return sqrt((mu*G*r)/(1.0 - MIN(1.0, r*CA*mu/mass)));
+    }
+}
+
+/* Compute the length to the end of the segment */
+float Driver::getDistToSegEnd()
+{
+    if (car->_trkPos.seg->type == TR_STR) {
+        return car->_trkPos.seg->length - car->_trkPos.toStart;
+    } else {
+        return (car->_trkPos.seg->arc - car->_trkPos.toStart)*car->_trkPos.seg->radius;
+    }
 }
 
 Driver::~Driver()

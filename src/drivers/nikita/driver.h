@@ -56,10 +56,16 @@ class Driver {
         bool isStuck(tCarElt* car);
         void update(tCarElt* car, tSituation *s);
         int getGear(tCarElt *car);
+        float getBrake();
+        void initCa();
+        void initCw();
         float getEnvironmentPotential(tCarElt* car);
-        // float getCarPotential(tCarElt* car, tSituation* s);
+        float getCarPotential(tCarElt* car, tSituation* s);
         float getPotentialGradientY(tCarElt* car);
         float getPotentialGradientX(tCarElt* car);
+        float getAllowedSpeed(tTrackSeg *segment);
+        float getDistToSegEnd();
+        float filterBColl(float brake); 
 
         Opponents *opponents;
         Opponent *opponent;
@@ -69,6 +75,10 @@ class Driver {
         float trackangle;
         float angle;
         tCarElt *car;
+        float mass;
+        float CARMASS;
+        float CA;
+        float CW;
         float speed;    /* speed in track direction */
         float cur_y; // y-coordinate in the global Frenet FOR as defined in the artificial potential paper
         float cur_x;
@@ -77,8 +87,6 @@ class Driver {
         int MAX_UNSTUCK_COUNT;
         int INDEX;
         float DESIRED_SPEED;
-        // float WIDTH;
-        // float LENGTH;
 
         /* class constants */
         static const float MAX_UNSTUCK_ANGLE;
