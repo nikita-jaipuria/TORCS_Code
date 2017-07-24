@@ -21,7 +21,7 @@
 tTrack* Opponent::track;
 float Opponent::FRONTCOLLDIST = 200.0;  /* [m] distance to check for other cars */
 float Opponent::BACKCOLLDIST = 50.0;    /* [m] distance to check for other cars */
-float Opponent::LENGTH_MARGIN = 2.0;    /* [m] safety margin */
+float Opponent::LENGTH_MARGIN = 10.0;    /* [m] safety margin */
 float Opponent::SIDE_MARGIN = 1.0;      /* [m] safety margin */
 
 Opponent::Opponent()
