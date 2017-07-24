@@ -200,16 +200,7 @@ float Driver::getPotentialGradientY(tCarElt* car)
 
 float Driver::getPotentialGradientX(tCarElt* car)
 {
-    float uVelGradX = _gamma*(getSpeed(car) - DESIRED_SPEED);
+    float uVelGradX = _gamma*(car->pub.speed - DESIRED_SPEED);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
-}
-
-float Driver::getSpeed(tCarElt* car) {
-    v2d speed, dir;
-    speed.x = car->_speed_X;
-    speed.y = car->_speed_Y;
-    dir.x = cos(trackangle);
-    dir.y = sin(trackangle);
-    return speed*dir;
 }
