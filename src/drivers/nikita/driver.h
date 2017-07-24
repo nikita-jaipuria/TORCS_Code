@@ -61,8 +61,8 @@ class Driver {
         float getPotentialGradientY(tCarElt* car);
         float getPotentialGradientX(tCarElt* car);
 
-        // Opponents *opponents;
-        // Opponent *opponent;
+        Opponents *opponents;
+        Opponent *opponent;
 
         /* per robot global data */
         int stuck;

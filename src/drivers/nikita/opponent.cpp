@@ -54,7 +54,7 @@ float Opponent::getDistToSegStart()
 /* Update the values in Opponent this */
 void Opponent::update(tSituation *s, Driver *driver)
 {
-    tCarElt *mycar = driver->getCarPtr(); // ego vehicle/controlled vehicle
+    tCarElt *mycar = driver->getCarPtr();
 
     /* init state of opponent to ignore */
     state = OPP_IGNORE;
@@ -63,9 +63,7 @@ void Opponent::update(tSituation *s, Driver *driver)
     if (car->_state & RM_CAR_STATE_NO_SIMU) {
         return;
     }
-
     /* updating distance along the middle */
-    // up to a half track length the opponent is in front of us (distance is positive), else it is behind (distance is negative)
     float oppToStart = car->_trkPos.seg->lgfromstart + getDistToSegStart();
     distance = oppToStart - mycar->_distFromStartLine;
     if (distance > track->length/2.0) {
@@ -89,7 +87,6 @@ void Opponent::update(tSituation *s, Driver *driver)
             state |= OPP_FRONT;
             distance -= MAX(car->_dimension_x, mycar->_dimension_x);
             distance -= LENGTH_MARGIN;
-            // equivalent of checking if the opponent in front and slower is also in the same lane
             float cardist = car->_trkPos.toMiddle - mycar->_trkPos.toMiddle;
             sidedist = cardist;
             cardist = fabs(cardist) - fabs(width/2.0) - mycar->_dimension_y/2.0;
