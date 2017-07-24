@@ -54,11 +54,14 @@ class Driver {
         // float getCarPotential(tCarElt* car, tSituation* s);
         float getPotentialGradientY(tCarElt* car);
         float getPotentialGradientX(tCarElt* car);
+        float getSpeed(tCarElt* car); // get speed component of driver parallel to track
 
         /* per robot global data */
         int stuck;
         float trackangle;
         float angle;
+        float cur_y; // y-coordinate in the global Frenet FOR as defined in the artificial potential paper
+        // float cur_x;
 
         /* data that should stay constant after first initialization */
         int MAX_UNSTUCK_COUNT;

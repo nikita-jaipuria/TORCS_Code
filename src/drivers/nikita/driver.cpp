@@ -123,6 +123,8 @@ void Driver::update(tCarElt* car, tSituation *s)
     trackangle = RtTrackSideTgAngleL(&(car->_trkPos));
     angle = trackangle - car->_yaw;
     NORM_PI_PI(angle);
+    cur_y = car->_trkPos.toMiddle + 5.7;
+    // cur_x = 
 }
 
 /* Check if I'm stuck */
@@ -166,7 +168,6 @@ int Driver::getGear(tCarElt* car)
 // for indexing of road and lane edges, followed the same directional convention as for lanes
 float Driver::getEnvironmentPotential(tCarElt* car)
 {
-    float cur_y = car->_trkPos.toMiddle + 5.7;
     float uLane1 = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR);
     float uLane2 = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR);
     float uLane3 = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR);
@@ -177,8 +178,6 @@ float Driver::getEnvironmentPotential(tCarElt* car)
 
 // float Driver::getCarPotential(tCarElt* car, tSituation* s)
 // {
-//     float cur_x = ;
-//     float cur_y = ;
 //     float uCar = ; 
 //     int m = ; // number of relevant obstacle cars
 //     for (int i = 0; i < m; i++) {
@@ -190,7 +189,6 @@ float Driver::getEnvironmentPotential(tCarElt* car)
 
 float Driver::getPotentialGradientY(tCarElt* car)
 {
-    float cur_y = car->_trkPos.toMiddle + 5.7;
     float uLane1GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*5.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*5.0)/GAUSSIAN_DENOMINATOR);
     float uLane2GradY = Alane*exp(-pow(cur_y - deltaLane/2.0*3.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0*3.0)/GAUSSIAN_DENOMINATOR);
     float uLane3GradY = Alane*exp(-pow(cur_y - deltaLane/2.0, 2)/GAUSSIAN_DENOMINATOR)*(-2*(cur_y - deltaLane/2.0)/GAUSSIAN_DENOMINATOR);
@@ -202,7 +200,16 @@ float Driver::getPotentialGradientY(tCarElt* car)
 
 float Driver::getPotentialGradientX(tCarElt* car)
 {
-    float uVelGradX = _gamma*(car->pub.speed - DESIRED_SPEED);
+    float uVelGradX = _gamma*(getSpeed(car) - DESIRED_SPEED);
     float uCarGradX = 0.0; // check behaviour without obstacles
     return uVelGradX + uCarGradX;
+}
+
+float Driver::getSpeed(tCarElt* car) {
+    v2d speed, dir;
+    speed.x = car->_speed_X;
+    speed.y = car->_speed_Y;
+    dir.x = cos(trackangle);
+    dir.y = sin(trackangle);
+    return speed*dir;
 }
