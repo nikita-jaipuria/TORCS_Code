@@ -33,11 +33,10 @@
 	<attstr name="desc" val="nikita 2"></attstr>
 	<attstr name="team" val="nikita"></attstr>
 	<attstr name="author" val="Nikita"></attstr>
-	<attstr name="car name" val="kc-p4"></attstr>
-	<attstr name="category" val="Offroad-4WD-GrA"></attstr>
+	<attstr name="car name" val="baja-bug"></attstr>
 	<attnum name="race number" val="0"></attnum>
 	<attnum name="red" val="1.0"></attnum>
-	<attnum name="green" val="1.0"></attnum>
+	<attnum name="green" val="0.0"></attnum>
 	<attnum name="blue" val="1.0"></attnum>
       </section>
 
@@ -46,10 +45,9 @@
 	<attstr name="desc" val="nikita 3"></attstr>
 	<attstr name="team" val="nikita"></attstr>
 	<attstr name="author" val="Nikita"></attstr>
-	<attstr name="car name" val="kc-p4"></attstr>
-	<attstr name="category" val="Offroad-4WD-GrA"></attstr>
+	<attstr name="car name" val="car1-stock1"></attstr>
 	<attnum name="race number" val="0"></attnum>
-	<attnum name="red" val="1.0"></attnum>
+	<attnum name="red" val="0.0"></attnum>
 	<attnum name="green" val="1.0"></attnum>
 	<attnum name="blue" val="1.0"></attnum>
       </section>
@@ -59,10 +57,83 @@
 	<attstr name="desc" val="nikita 4"></attstr>
 	<attstr name="team" val="nikita"></attstr>
 	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="pw-focuswrc"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="0.0"></attnum>
+	<attnum name="green" val="1.0"></attnum>
+	<attnum name="blue" val="1.0"></attnum>
+      </section>
+
+      <section name="5">
+	<attstr name="name" val="nikita 5"></attstr>
+	<attstr name="desc" val="nikita 5"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="car1-ow1"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="1.0"></attnum>
+	<attnum name="green" val="0.0"></attnum>
+	<attnum name="blue" val="0.0"></attnum>
+      </section>
+
+      <section name="6">
+	<attstr name="name" val="nikita 6"></attstr>
+	<attstr name="desc" val="nikita 6"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
 	<attstr name="car name" val="kc-p4"></attstr>
 	<attstr name="category" val="Offroad-4WD-GrA"></attstr>
 	<attnum name="race number" val="0"></attnum>
 	<attnum name="red" val="1.0"></attnum>
+	<attnum name="green" val="1.0"></attnum>
+	<attnum name="blue" val="1.0"></attnum>
+      </section>
+
+      <section name="7">
+	<attstr name="name" val="nikita 7"></attstr>
+	<attstr name="desc" val="nikita 7"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="baja-bug"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="1.0"></attnum>
+	<attnum name="green" val="0.0"></attnum>
+	<attnum name="blue" val="1.0"></attnum>
+      </section>
+
+      <section name="8">
+	<attstr name="name" val="nikita 8"></attstr>
+	<attstr name="desc" val="nikita 8"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="car1-ow1"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="1.0"></attnum>
+	<attnum name="green" val="0.0"></attnum>
+	<attnum name="blue" val="0.0"></attnum>
+      </section>
+
+      <section name="9">
+	<attstr name="name" val="nikita 9"></attstr>
+	<attstr name="desc" val="nikita 9"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="kc-p4"></attstr>
+	<attstr name="category" val="Offroad-4WD-GrA"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="1.0"></attnum>
+	<attnum name="green" val="1.0"></attnum>
+	<attnum name="blue" val="1.0"></attnum>
+      </section>
+
+      <section name="10">
+	<attstr name="name" val="nikita 10"></attstr>
+	<attstr name="desc" val="nikita 10"></attstr>
+	<attstr name="team" val="nikita"></attstr>
+	<attstr name="author" val="Nikita"></attstr>
+	<attstr name="car name" val="car1-stock1"></attstr>
+	<attnum name="race number" val="0"></attnum>
+	<attnum name="red" val="0.0"></attnum>
 	<attnum name="green" val="1.0"></attnum>
 	<attnum name="blue" val="1.0"></attnum>
       </section>

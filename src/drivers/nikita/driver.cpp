@@ -59,7 +59,8 @@ void Driver::newRace(tCarElt* car, tSituation *s)
     initCa();
     initCw();
     mass = CARMASS + car->_fuel;
-    DESIRED_SPEED = (100+INDEX*2-1)/3.6; /* [m/s] */
+    DESIRED_SPEED = (100+INDEX*5-5)/3.6; /* [m/s] */
+    std::cout << DESIRED_SPEED << std::endl;
     /* initialize the list of opponents */
     opponents = new Opponents(s, this);
     opponent = opponents->getOpponentPtr();

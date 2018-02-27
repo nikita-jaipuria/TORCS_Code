@@ -37,12 +37,12 @@
 
 #include "driver.h"
 
-#define BOTS 4
+#define BOTS 10
 
 // static tTrack   *curTrack;
 
-static const char* botname[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4"};
-static const char* botdesc[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4"};
+static const char* botname[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4", "nikita 5", "nikita 6", "nikita 7", "nikita 8", "nikita 9", "nikita 10"};
+static const char* botdesc[BOTS] = {"nikita 1", "nikita 2", "nikita 3", "nikita 4", "nikita 5", "nikita 6", "nikita 7", "nikita 8", "nikita 9", "nikita 10"};
 
 static Driver * driver[BOTS];
 static void initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s); 
@@ -52,16 +52,17 @@ static void endrace(int index, tCarElt *car, tSituation *s);
 static void shutdown(int index);
 static int  InitFuncPt(int index, void *pt); 
 
-
 /* 
  * Module entry point  
- */ 
+ */
+
 extern "C" int 
 nikita(tModInfo *modInfo) 
 {
     // printf("Module entry point achieved\n");
     memset(modInfo, 0, 10*sizeof(tModInfo));    
     for (int i = 0; i < BOTS; i++) {
+        // std::cout << "YAYYY" << std::endl;
         modInfo[i].name    = strdup(botname[i]);        /* name of the module (short) */
         modInfo[i].desc    = strdup(botdesc[i]);  /* description of the module (can be long) */
         modInfo[i].fctInit = InitFuncPt;      /* init function */
